@@ -19,7 +19,9 @@ COUNT=0
 while [ 1 ];
 do
 	BASEUSER="parauser"
-	cmd put "$BASEUSER"_"$COUNT" "{'username':'"$BASEUSER"_"$COUNT"','password':'111111'}"
+	cmd put "$BASEUSER"_"$COUNT" "{\"username\":\"$BASEUSER"_"$COUNT\",\"password\":\"111111\"}"
+	cmd put "$BASEUSER"_"$COUNT" "{\"username\":\"$BASEUSER"_"$COUNT\",\"password\":\"111111\"}"
+	cmd del "$BASEUSER"_"$COUNT" ""
 	COUNT=$(( $COUNT+1 ))
 done
 
