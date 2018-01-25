@@ -23,5 +23,9 @@ do
 	cmd put "$BASEUSER"_"$COUNT" "{\"username\":\"$BASEUSER"_"$COUNT\",\"password\":\"111111\"}"
 	cmd del "$BASEUSER"_"$COUNT" ""
 	COUNT=$(( $COUNT+1 ))
+	SLEEP_TIMEOUT=` echo "$COUNT % 10" |bc`
+	if [ $SLEEP_TIMEOUT -eq 0 ];then
+		sleep 5
+	fi
 done
 
