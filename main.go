@@ -48,12 +48,12 @@ func main() {
 				case mvccpb.PUT:
 					switch {
 					case ev.IsCreate():
-						CreateOneUser()
+						CreateOneUser(ev)
 					default:
-						UpdateOneUser()
+						UpdateOneUser(ev)
 					}
 				case mvccpb.DELETE:
-					DeleteOneUser()
+					DeleteOneUser(ev, node[4])
 				default:
 
 				}

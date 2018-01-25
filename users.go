@@ -1,13 +1,14 @@
-package prxetcd
+package main
 
 import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/coreos/etcd/clientv3"
 	"github.com/imSQL/proxysql"
 )
 
-func CreateOneUser() {
+func CreateOneUser(ev *clientv3.Event) {
 	fmt.Printf("Create %q : %q\n", ev.Kv.Key, ev.Kv.Value)
 	conn, err := proxysql.NewConn("172.18.10.136", 13306, "admin", "admin")
 	if err != nil {
@@ -41,7 +42,7 @@ func CreateOneUser() {
 	}
 }
 
-func UpdateOneUser() {
+func UpdateOneUser(ev *clientv3.Event) {
 	fmt.Printf("Update %q : %q\n", ev.Kv.Key, ev.Kv.Value)
 	conn, err := proxysql.NewConn("172.18.10.136", 13306, "admin", "admin")
 	if err != nil {
@@ -74,7 +75,7 @@ func UpdateOneUser() {
 	}
 }
 
-func DeleteOneUser() {
+func DeleteOneUser(ev *clientv3.Event, username string) {
 	fmt.Printf("Delete %q \n", ev.Kv.Key)
 
 	conn, err := proxysql.NewConn("172.18.10.136", 13306, "admin", "admin")
@@ -91,7 +92,7 @@ func DeleteOneUser() {
 	}
 
 	var tmpusr proxysql.Users
-	tmpusr.Username = node[4]
+	tmpusr.Username = username
 
 	newuser, err := proxysql.NewUser(tmpusr.Username, tmpusr.Password, 0, tmpusr.Username)
 	if err != nil {
