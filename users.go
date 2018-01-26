@@ -40,6 +40,11 @@ func CreateOneUser(ev *clientv3.Event) {
 	if err != nil {
 		fmt.Println(err)
 	}
+
+	err = conn.CloseConn(db)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func UpdateOneUser(ev *clientv3.Event) {
@@ -73,6 +78,11 @@ func UpdateOneUser(ev *clientv3.Event) {
 	if err != nil {
 		fmt.Println(err)
 	}
+
+	err = conn.CloseConn(db)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func DeleteOneUser(ev *clientv3.Event, username string) {
@@ -100,6 +110,11 @@ func DeleteOneUser(ev *clientv3.Event, username string) {
 	}
 
 	err = newuser.DeleteOneUser(db)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	err = conn.CloseConn(db)
 	if err != nil {
 		fmt.Println(err)
 	}
