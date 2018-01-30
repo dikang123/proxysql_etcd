@@ -25,7 +25,7 @@ do
 	COUNT=$(( $COUNT+1 ))
 	SLEEP_TIMEOUT=` echo "$COUNT % 10" |bc`
 	if [ $SLEEP_TIMEOUT -eq 0 ];then
-		sleep 5
+		sleep 10
 	fi
 done
 

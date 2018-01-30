@@ -59,7 +59,13 @@ func main() {
 				}
 
 			case "servers":
-
+				fmt.Println("servers")
+			case "queryrules":
+				fmt.Println("queryrules")
+			case "schedulers":
+				fmt.Println("schedulers")
+			case "variables":
+				fmt.Println("variables")
 			default:
 				fmt.Println("node[3] " + node[3])
 			}
