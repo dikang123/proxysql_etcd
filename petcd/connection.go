@@ -33,7 +33,7 @@ type (
 )
 
 func NewEtcdCli(endpoints []string) *EtcdCli {
-	var etcdcli *EtcdCli
+	var etcdcli EtcdCli
 
 	etcdcli.DialTimeout = 5 * time.Second
 	etcdcli.RequestTimeout = 3 * time.Second
@@ -48,7 +48,7 @@ func NewEtcdCli(endpoints []string) *EtcdCli {
 	etcdcli.ProxySQLAdmin = "admin"
 	etcdcli.ProxySQLPass = "admin"
 
-	return etcdcli
+	return &etcdcli
 }
 
 func (cli *EtcdCli) SetDilTimeout(num uint64) {
