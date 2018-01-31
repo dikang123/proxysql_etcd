@@ -5,31 +5,25 @@ import (
 	"fmt"
 	"log"
 	"strings"
-	"time"
 
 	"github.com/coreos/etcd/clientv3"
 	"github.com/coreos/etcd/mvcc/mvccpb"
-)
-
-var (
-	dialTimeout    = 5 * time.Second
-	requestTimeout = 2 * time.Second
-	endpoints      = []string{"172.18.10.136:2379"}
+	"github.com/imSQL/proxysql_etcd/petcd"
 )
 
 func main() {
-	cli, err := clientv3.New(clientv3.Config{
-		Endpoints:   endpoints,
-		DialTimeout: dialTimeout,
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer cli.Close()
+
+	endpoints := []string{"172.18.10.136:2379"}
+	etcdcli := petcd.NewEtcdCli(endpoints)
+
+	etcdcli.SetPrefix("database")
+	etcdcli.SetService("parauser")
+
+	etcdcli.OpenEtcd()
 
 	// see https://github.com/coreos/etcd/blob/master/clientv3/example_watch_test.go
 	log.Println("Running proxysql_etcd as watch mode. the watching path is /database/parauser")
-	rch := cli.Watch(context.Background(), "/database/parauser", clientv3.WithPrefix())
+	rch := etcdcli.etcdv3.Watch(context.Background(), "/database/parauser", clientv3.WithPrefix())
 	for wresp := range rch {
 		for _, ev := range wresp.Events {
 
@@ -48,12 +42,12 @@ func main() {
 				case mvccpb.PUT:
 					switch {
 					case ev.IsCreate():
-						CreateOneUser(ev)
+						petcd.CreateOneUser(ev)
 					default:
-						UpdateOneUser(ev)
+						petcd.UpdateOneUser(ev)
 					}
 				case mvccpb.DELETE:
-					DeleteOneUser(ev, node[4])
+					petcd.DeleteOneUser(ev, node[4])
 				default:
 
 				}

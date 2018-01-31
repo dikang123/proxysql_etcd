@@ -1,4 +1,4 @@
-package main
+package petcd
 
 import (
 	"encoding/json"
@@ -8,7 +8,7 @@ import (
 	"github.com/imSQL/proxysql"
 )
 
-func CreateOneUser(ev *clientv3.Event) {
+func CreateOneServer(ev *clientv3.Event) {
 	fmt.Printf("Create %q : %q\n", ev.Kv.Key, ev.Kv.Value)
 	conn, err := proxysql.NewConn("172.18.10.136", 13306, "admin", "admin")
 	if err != nil {
@@ -23,20 +23,20 @@ func CreateOneUser(ev *clientv3.Event) {
 		fmt.Println(err)
 	}
 
-	var tmpusr proxysql.Users
-	if err := json.Unmarshal(ev.Kv.Value, &tmpusr); err != nil {
+	var tmpsrv proxysql.Servers
+	if err := json.Unmarshal(ev.Kv.Value, &tmpsrv); err != nil {
 		fmt.Println(err)
 	}
 	//tmpusr.Username = node[4]
 
-	newuser, err := proxysql.NewUser(tmpusr.Username, tmpusr.Password, 0, tmpusr.Username)
+	newsrv, err := proxysql.NewServer(tmpsrv.HostGroupId, tmpsrv.HostName, tmpsrv.Port)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	newuser.SetUserActive(1)
+	//newsrv.MaxConnections(10000)
 
-	err = newuser.AddOneUser(db)
+	err = newsrv.AddOneServers(db)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -47,7 +47,7 @@ func CreateOneUser(ev *clientv3.Event) {
 	}
 }
 
-func UpdateOneUser(ev *clientv3.Event) {
+func UpdateOneServer(ev *clientv3.Event) {
 	fmt.Printf("Update %q : %q\n", ev.Kv.Key, ev.Kv.Value)
 	conn, err := proxysql.NewConn("172.18.10.136", 13306, "admin", "admin")
 	if err != nil {
@@ -62,19 +62,19 @@ func UpdateOneUser(ev *clientv3.Event) {
 		fmt.Println(err)
 	}
 
-	var tmpusr proxysql.Users
-	if err := json.Unmarshal(ev.Kv.Value, &tmpusr); err != nil {
+	var tmpsrv proxysql.Servers
+	if err := json.Unmarshal(ev.Kv.Value, &tmpsrv); err != nil {
 		fmt.Println(err)
 	}
 
-	newuser, err := proxysql.NewUser(tmpusr.Username, tmpusr.Password, 0, tmpusr.Username)
+	newsrv, err := proxysql.NewServer(tmpsrv.HostGroupId, tmpsrv.HostName, tmpsrv.Port)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	newuser.SetUserActive(1)
+	newsrv.SetServerMaxConnection(tmpsrv.MaxConnections)
 
-	err = newuser.UpdateOneUserInfo(db)
+	err = newsrv.UpdateOneServerInfo(db)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -85,7 +85,7 @@ func UpdateOneUser(ev *clientv3.Event) {
 	}
 }
 
-func DeleteOneUser(ev *clientv3.Event, username string) {
+func DeleteOneServer(ev *clientv3.Event, username string) {
 	fmt.Printf("Delete %q \n", ev.Kv.Key)
 
 	conn, err := proxysql.NewConn("172.18.10.136", 13306, "admin", "admin")
@@ -101,15 +101,14 @@ func DeleteOneUser(ev *clientv3.Event, username string) {
 		fmt.Println(err)
 	}
 
-	var tmpusr proxysql.Users
-	tmpusr.Username = username
+	var tmpsrv proxysql.Servers
 
-	newuser, err := proxysql.NewUser(tmpusr.Username, tmpusr.Password, 0, tmpusr.Username)
+	newsrv, err := proxysql.NewServer(tmpsrv.HostGroupId, tmpsrv.HostName, tmpsrv.Port)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	err = newuser.DeleteOneUser(db)
+	err = newsrv.DeleteOneServers(db)
 	if err != nil {
 		fmt.Println(err)
 	}
