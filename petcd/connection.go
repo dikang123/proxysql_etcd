@@ -1,6 +1,7 @@
 package petcd
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/coreos/etcd/clientv3"
@@ -20,6 +21,7 @@ type (
 		// parauser is service
 		Prefix  string
 		Service string
+		Root    string
 
 		//proxysql connection informations.
 		ProxySQLAddr  string
@@ -32,42 +34,61 @@ type (
 	}
 )
 
+// new etcd client
+// return a new etcdcli.
 func NewEtcdCli(endpoints []string) *EtcdCli {
+
 	var etcdcli EtcdCli
 
+	// set default timeout value
 	etcdcli.DialTimeout = 5 * time.Second
 	etcdcli.RequestTimeout = 3 * time.Second
 
+	// set endporints
 	etcdcli.EndPoints = endpoints
 
-	etcdcli.Prefix = "/database"
+	// set watch path
+	etcdcli.Prefix = "database"
 	etcdcli.Service = "users"
 
-	etcdcli.ProxySQLAddr = "172.18.10.136"
-	etcdcli.ProxySQLPort = 13306
+	// default proxysql dbi.
+	etcdcli.ProxySQLAddr = "127.0.0.1"
+	etcdcli.ProxySQLPort = 6032
 	etcdcli.ProxySQLAdmin = "admin"
 	etcdcli.ProxySQLPass = "admin"
 
 	return &etcdcli
 }
 
+// set dialtimeout
 func (cli *EtcdCli) SetDilTimeout(num uint64) {
 
-	cli.DialTimeout = 5 * time.Second
+	cli.DialTimeout = time.Duration(num) * time.Second
 }
 
+// set request timeout
 func (cli *EtcdCli) SetRequestTimeout(num uint64) {
-	cli.RequestTimeout = 5 * time.Second
+
+	cli.RequestTimeout = time.Duration(num) * time.Second
 }
 
+// set root path
+// default is database
 func (cli *EtcdCli) SetPrefix(prefix string) {
 	cli.Prefix = prefix
 }
 
+// set service name
 func (cli *EtcdCli) SetService(service string) {
 	cli.Service = service
 }
 
+// prefix+service
+func (cli *EtcdCli) MakeWatchRoot() {
+	cli.Root = fmt.Sprintf("/%s/%s", cli.Prefix, cli.Service)
+}
+
+// open etcd connection.
 func (cli *EtcdCli) OpenEtcd() (*clientv3.Client, error) {
 
 	var ecli *clientv3.Client
@@ -83,7 +104,8 @@ func (cli *EtcdCli) OpenEtcd() (*clientv3.Client, error) {
 	return ecli, nil
 }
 
+// close etcd connection.
 func (cli *EtcdCli) CloseEtcd(ecli *clientv3.Client) error {
-	ecli.Close()
-	return nil
+	err := ecli.Close()
+	return errors.Trace(err)
 }
