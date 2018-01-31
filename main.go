@@ -18,12 +18,15 @@ func main() {
 
 	etcdcli.SetPrefix("database")
 	etcdcli.SetService("parauser")
-
-	etcdcli.OpenEtcd()
+	cli, err := etcdcli.OpenEtcd()
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	// see https://github.com/coreos/etcd/blob/master/clientv3/example_watch_test.go
 	log.Println("Running proxysql_etcd as watch mode. the watching path is /database/parauser")
-	rch := etcdcli.etcdv3.Watch(context.Background(), "/database/parauser", clientv3.WithPrefix())
+
+	rch := cli.Watch(context.Background(), "/database/parauser", clientv3.WithPrefix())
 	for wresp := range rch {
 		for _, ev := range wresp.Events {
 

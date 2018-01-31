@@ -14,9 +14,6 @@ type (
 		RequestTimeout time.Duration
 		EndPoints      []string
 
-		//clientv3.Client
-		etcdv3 *clientv3.Client
-
 		//watch path.
 		// sucs as :  /database/parauser
 		// database is prefix
@@ -71,18 +68,22 @@ func (cli *EtcdCli) SetService(service string) {
 	cli.Service = service
 }
 
-func (cli *EtcdCli) OpenEtcd() error {
-	cli.etcdv3, cli.Err = clientv3.New(clientv3.Config{
+func (cli *EtcdCli) OpenEtcd() (*clientv3.Client, error) {
+
+	var ecli *clientv3.Client
+
+	ecli, err := clientv3.New(clientv3.Config{
 		Endpoints:   cli.EndPoints,
 		DialTimeout: cli.DialTimeout,
 	})
-	if cli.Err != nil {
-		return errors.Trace(cli.Err)
+	if err != nil {
+		return nil, errors.Trace(err)
 	}
 
-	return nil
+	return ecli, nil
 }
 
-func (cli *EtcdCli) CloseEtcd() {
-	cli.etcdv3.Close()
+func (cli *EtcdCli) CloseEtcd(ecli *clientv3.Client) error {
+	ecli.Close()
+	return nil
 }
