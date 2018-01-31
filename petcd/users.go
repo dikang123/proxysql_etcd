@@ -8,9 +8,9 @@ import (
 	"github.com/imSQL/proxysql"
 )
 
-func CreateOneUser(ev *clientv3.Event) {
+func CreateOneUser(ev *clientv3.Event, etcdcli *EtcdCli) {
 	fmt.Printf("Create %q : %q\n", ev.Kv.Key, ev.Kv.Value)
-	conn, err := proxysql.NewConn("172.18.10.136", 13306, "admin", "admin")
+	conn, err := proxysql.NewConn(etcdcli.ProxySQLAddr, etcdcli.ProxySQLPort, etcdcli.ProxySQLAdmin, etcdcli.ProxySQLPass)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -47,9 +47,9 @@ func CreateOneUser(ev *clientv3.Event) {
 	}
 }
 
-func UpdateOneUser(ev *clientv3.Event) {
+func UpdateOneUser(ev *clientv3.Event, etcdcli *EtcdCli) {
 	fmt.Printf("Update %q : %q\n", ev.Kv.Key, ev.Kv.Value)
-	conn, err := proxysql.NewConn("172.18.10.136", 13306, "admin", "admin")
+	conn, err := proxysql.NewConn(etcdcli.ProxySQLAddr, etcdcli.ProxySQLPort, etcdcli.ProxySQLAdmin, etcdcli.ProxySQLPass)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -85,10 +85,10 @@ func UpdateOneUser(ev *clientv3.Event) {
 	}
 }
 
-func DeleteOneUser(ev *clientv3.Event, username string) {
+func DeleteOneUser(ev *clientv3.Event, etcdcli *EtcdCli, username string) {
 	fmt.Printf("Delete %q \n", ev.Kv.Key)
 
-	conn, err := proxysql.NewConn("172.18.10.136", 13306, "admin", "admin")
+	conn, err := proxysql.NewConn(etcdcli.ProxySQLAddr, etcdcli.ProxySQLPort, etcdcli.ProxySQLAdmin, etcdcli.ProxySQLPass)
 	if err != nil {
 		fmt.Println(err)
 	}

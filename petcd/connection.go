@@ -88,6 +88,23 @@ func (cli *EtcdCli) MakeWatchRoot() {
 	cli.Root = fmt.Sprintf("/%s/%s", cli.Prefix, cli.Service)
 }
 
+// set proxysql dbi
+func (cli *EtcdCli) SetProxyAddr(proxy_addr string) {
+	cli.ProxySQLAddr = proxy_addr
+}
+
+func (cli *EtcdCli) SetProxyPort(proxy_port uint64) {
+	cli.ProxySQLPort = proxy_port
+}
+
+func (cli *EtcdCli) SetProxyAdmin(admin string) {
+	cli.ProxySQLAdmin = admin
+}
+
+func (cli *EtcdCli) SetProxyPass(pass string) {
+	cli.ProxySQLPass = pass
+}
+
 // open etcd connection.
 func (cli *EtcdCli) OpenEtcd() (*clientv3.Client, error) {
 

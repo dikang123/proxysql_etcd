@@ -25,6 +25,15 @@ func main() {
 		fmt.Println(err)
 	}
 
+	fmt.Println(etcdcli.ProxySQLAddr, etcdcli.ProxySQLPort, etcdcli.ProxySQLAdmin, etcdcli.ProxySQLPass)
+
+	etcdcli.SetProxyAddr("172.18.10.136")
+	etcdcli.SetProxyPort(13306)
+	etcdcli.SetProxyAdmin("admin")
+	etcdcli.SetProxyPass("admin")
+
+	fmt.Println(etcdcli.ProxySQLAddr, etcdcli.ProxySQLPort, etcdcli.ProxySQLAdmin, etcdcli.ProxySQLPass)
+
 	// see https://github.com/coreos/etcd/blob/master/clientv3/example_watch_test.go
 	log.Println("Running proxysql_etcd as watch mode. the watching path is ", etcdcli.Root)
 
@@ -47,12 +56,12 @@ func main() {
 				case mvccpb.PUT:
 					switch {
 					case ev.IsCreate():
-						petcd.CreateOneUser(ev)
+						petcd.CreateOneUser(ev, etcdcli)
 					default:
-						petcd.UpdateOneUser(ev)
+						petcd.UpdateOneUser(ev, etcdcli)
 					}
 				case mvccpb.DELETE:
-					petcd.DeleteOneUser(ev, node[4])
+					petcd.DeleteOneUser(ev, etcdcli, node[4])
 				default:
 
 				}
