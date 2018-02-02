@@ -42,6 +42,8 @@ func main() {
 		for _, ev := range wresp.Events {
 
 			node := strings.Split(string(ev.Kv.Key), "/")
+			etcdcli.SetEtcdKey(node[4])
+			etcdcli.SetEtcdValue(string(ev.Kv.Value))
 
 			switch node[3] {
 			/*
@@ -61,7 +63,7 @@ func main() {
 						petcd.UpdateOneUser(ev, etcdcli)
 					}
 				case mvccpb.DELETE:
-					petcd.DeleteOneUser(ev, etcdcli, node[4])
+					petcd.DeleteOneUser(ev, etcdcli)
 				default:
 
 				}

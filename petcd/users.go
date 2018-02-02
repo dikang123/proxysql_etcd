@@ -1,6 +1,7 @@
 package petcd
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 
@@ -24,12 +25,17 @@ func CreateOneUser(ev *clientv3.Event, etcdcli *EtcdCli) {
 	}
 
 	var tmpusr proxysql.Users
-	if err := json.Unmarshal(ev.Kv.Value, &tmpusr); err != nil {
+	key, _ := base64.StdEncoding.DecodeString(etcdcli.Key)
+	value, _ := base64.StdEncoding.DecodeString(etcdcli.Value)
+
+	err = json.Unmarshal(value, &tmpusr)
+
+	if err := json.Unmarshal(value, &tmpusr); err != nil {
 		fmt.Println(err)
 	}
 	//tmpusr.Username = node[4]
 
-	newuser, err := proxysql.NewUser(tmpusr.Username, tmpusr.Password, 0, tmpusr.Username)
+	newuser, err := proxysql.NewUser(string(key), tmpusr.Password, 0, tmpusr.Username)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -63,11 +69,16 @@ func UpdateOneUser(ev *clientv3.Event, etcdcli *EtcdCli) {
 	}
 
 	var tmpusr proxysql.Users
-	if err := json.Unmarshal(ev.Kv.Value, &tmpusr); err != nil {
-		fmt.Println(err)
+	key, _ := base64.StdEncoding.DecodeString(etcdcli.Key)
+	value, _ := base64.StdEncoding.DecodeString(etcdcli.Value)
+
+	err = json.Unmarshal(value, &tmpusr)
+
+	if err := json.Unmarshal(value, &tmpusr); err != nil {
+		fmt.Println("err->:", err)
 	}
 
-	newuser, err := proxysql.NewUser(tmpusr.Username, tmpusr.Password, 0, tmpusr.Username)
+	newuser, err := proxysql.NewUser(string(key), tmpusr.Password, 0, tmpusr.Username)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -85,7 +96,7 @@ func UpdateOneUser(ev *clientv3.Event, etcdcli *EtcdCli) {
 	}
 }
 
-func DeleteOneUser(ev *clientv3.Event, etcdcli *EtcdCli, username string) {
+func DeleteOneUser(ev *clientv3.Event, etcdcli *EtcdCli) {
 	fmt.Printf("Delete %q \n", ev.Kv.Key)
 
 	conn, err := proxysql.NewConn(etcdcli.ProxySQLAddr, etcdcli.ProxySQLPort, etcdcli.ProxySQLAdmin, etcdcli.ProxySQLPass)
@@ -102,9 +113,12 @@ func DeleteOneUser(ev *clientv3.Event, etcdcli *EtcdCli, username string) {
 	}
 
 	var tmpusr proxysql.Users
-	tmpusr.Username = username
+	key, _ := base64.StdEncoding.DecodeString(etcdcli.Key)
+	value, _ := base64.StdEncoding.DecodeString(etcdcli.Value)
 
-	newuser, err := proxysql.NewUser(tmpusr.Username, tmpusr.Password, 0, tmpusr.Username)
+	err = json.Unmarshal(value, &tmpusr)
+
+	newuser, err := proxysql.NewUser(string(key), tmpusr.Password, 0, tmpusr.Username)
 	if err != nil {
 		fmt.Println(err)
 	}

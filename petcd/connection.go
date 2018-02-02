@@ -22,6 +22,9 @@ type (
 		Prefix  string
 		Service string
 		Root    string
+		Type    string
+		Key     string
+		Value   string
 
 		//proxysql connection informations.
 		ProxySQLAddr  string
@@ -47,9 +50,14 @@ func NewEtcdCli(endpoints []string) *EtcdCli {
 	// set endporints
 	etcdcli.EndPoints = endpoints
 
-	// set watch path
+	// etcd watch path.
+	// usage:  /<root path>/<service name>/<proxysql object>/<base64 key> <base64 value>
+	// example:  /database/user_center/users/cmVsYXRpb25fc2VydmljZQ== eyJpZCI6MSwidXNlcm5hbWUiOiJ0aWFubGVpIiwiYWdlIjozMywiYWRkcmVzcyI6ImJlaWppbmcifQ==
 	etcdcli.Prefix = "database"
 	etcdcli.Service = "users"
+	etcdcli.Type = "users"
+	etcdcli.Key = ""
+	etcdcli.Value = ""
 
 	// default proxysql dbi.
 	etcdcli.ProxySQLAddr = "127.0.0.1"
@@ -81,6 +89,16 @@ func (cli *EtcdCli) SetPrefix(prefix string) {
 // set service name
 func (cli *EtcdCli) SetService(service string) {
 	cli.Service = service
+}
+
+// set etcd key
+func (cli *EtcdCli) SetEtcdKey(key string) {
+	cli.Key = key
+}
+
+// set etcd value
+func (cli *EtcdCli) SetEtcdValue(val string) {
+	cli.Value = val
 }
 
 // prefix+service
