@@ -37,6 +37,12 @@ func main() {
 	// see https://github.com/coreos/etcd/blob/master/clientv3/example_watch_test.go
 	log.Println("Running proxysql_etcd as watch mode. the watching path is ", etcdcli.Root)
 
+	log.Println("Syncing Users informations into proxysql.")
+	err = petcd.SyncUserToProxy(etcdcli, cli)
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	rch := cli.Watch(context.Background(), etcdcli.Root, clientv3.WithPrefix())
 	for wresp := range rch {
 		for _, ev := range wresp.Events {
@@ -58,12 +64,15 @@ func main() {
 				case mvccpb.PUT:
 					switch {
 					case ev.IsCreate():
-						petcd.CreateOneUser(ev, etcdcli)
+						log.Println("CreateOneUser ", etcdcli.Key, etcdcli.Value)
+						petcd.CreateOneUser(etcdcli)
 					default:
-						petcd.UpdateOneUser(ev, etcdcli)
+						log.Println("UpdateOneUser ", etcdcli.Key, etcdcli.Value)
+						petcd.UpdateOneUser(etcdcli)
 					}
 				case mvccpb.DELETE:
-					petcd.DeleteOneUser(ev, etcdcli)
+					log.Println("DeleteOneUser ", etcdcli.Key, etcdcli.Value)
+					petcd.DeleteOneUser(etcdcli)
 				default:
 
 				}
