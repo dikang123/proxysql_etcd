@@ -22,7 +22,7 @@ func TestUser(t *testing.T) {
 
 	etcdcli.SetPrefix("database")
 	etcdcli.SetService("parauser")
-	etcdcli.SetEtcdKey("users")
+	etcdcli.SetEtcdType("users")
 	etcdcli.MakeWatchRoot()
 
 	cli, err := etcdcli.OpenEtcd()
@@ -98,8 +98,8 @@ func TestUser(t *testing.T) {
 
 		fmt.Println("Del success")
 
-		if i%100 == 0 {
-			time.Sleep(time.Second * 30)
+		if i%10 == 0 {
+			time.Sleep(time.Second * 3)
 		}
 	}
 
