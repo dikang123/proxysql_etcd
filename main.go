@@ -18,6 +18,7 @@ func main() {
 
 	etcdcli.SetPrefix("database")
 	etcdcli.SetService("parauser")
+	etcdcli.SetEtcdType("users")
 	etcdcli.MakeWatchRoot()
 
 	cli, err := etcdcli.OpenEtcd()

@@ -91,6 +91,11 @@ func (cli *EtcdCli) SetService(service string) {
 	cli.Service = service
 }
 
+// set type name
+func (cli *EtcdCli) SetEtcdType(etcd_type string) {
+	cli.Type = etcd_type
+}
+
 // set etcd key
 func (cli *EtcdCli) SetEtcdKey(key string) {
 	cli.Key = key
@@ -103,7 +108,7 @@ func (cli *EtcdCli) SetEtcdValue(val string) {
 
 // prefix+service
 func (cli *EtcdCli) MakeWatchRoot() {
-	cli.Root = fmt.Sprintf("/%s/%s", cli.Prefix, cli.Service)
+	cli.Root = fmt.Sprintf("/%s/%s/%s", cli.Prefix, cli.Service, cli.Type)
 }
 
 // set proxysql dbi
