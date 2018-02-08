@@ -79,14 +79,14 @@ func main() {
 				case mvccpb.PUT:
 					switch {
 					case ev.IsCreate():
-						log.Println("CreateOneUser ", etcdcli.Root+"/"+etcdcli.Key, etcdcli.Value)
+						log.Println("CreateOneUser ", etcdcli.Root+"/users/"+etcdcli.Key, etcdcli.Value)
 						petcd.CreateOneUser(etcdcli)
 					default:
-						log.Println("UpdateOneUser ", etcdcli.Root+"/"+etcdcli.Key, etcdcli.Value)
+						log.Println("UpdateOneUser ", etcdcli.Root+"/users/"+etcdcli.Key, etcdcli.Value)
 						petcd.UpdateOneUser(etcdcli)
 					}
 				case mvccpb.DELETE:
-					log.Println("DeleteOneUser ", etcdcli.Root+"/"+etcdcli.Key, etcdcli.Value)
+					log.Println("DeleteOneUser ", etcdcli.Root+"/users/"+etcdcli.Key, etcdcli.Value)
 					petcd.DeleteOneUser(etcdcli)
 				default:
 
@@ -97,14 +97,14 @@ func main() {
 				case mvccpb.PUT:
 					switch {
 					case ev.IsCreate():
-						log.Println("CreateOneServer ", etcdcli.Root+"/"+etcdcli.Key, etcdcli.Value)
+						log.Println("CreateOneServer ", etcdcli.Root+"/servers/"+etcdcli.Key, etcdcli.Value)
 						petcd.CreateOneServer(etcdcli)
 					default:
-						log.Println("UpdateOneServer ", etcdcli.Root+"/"+etcdcli.Key, etcdcli.Value)
+						log.Println("UpdateOneServer ", etcdcli.Root+"/servers/"+etcdcli.Key, etcdcli.Value)
 						petcd.UpdateOneServer(etcdcli)
 					}
 				case mvccpb.DELETE:
-					log.Println("DeleteOneServer ", etcdcli.Root+"/"+etcdcli.Key, etcdcli.Value)
+					log.Println("DeleteOneServer ", etcdcli.Root+"/servers/"+etcdcli.Key, etcdcli.Value)
 					petcd.DeleteOneServer(etcdcli)
 				default:
 
