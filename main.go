@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
+	"strconv"
 	"strings"
 
 	"github.com/coreos/etcd/clientv3"
@@ -13,16 +15,31 @@ import (
 
 func main() {
 
-	endpoints := []string{"172.18.10.136:2379"}
+	// get value from env
+	// etcd_endpoints like "192.168.100.10:2379,192.168.100.11:2379,192.168.100.12:2379"
+	// etcd_prefix like "database"
+	// etcd_service like "users"
+	// proxysql_addr like "user:password@addr?dbname"
+
+	etcd_endpoints := os.Getenv("ETCD_ADDR")
+	etcd_prefix := os.Getenv("ETCD_PREFIX")
+	etcd_service := os.Getenv("ETCD_SVC")
+	proxysql_addr := os.Getenv("PROXYSQL_ADDR")
+	proxysql_port := os.Getenv("PROXYSQL_PORT")
+	proxysql_user := os.Getenv("PROXYSQL_USER")
+	proxysql_pass := os.Getenv("PROXYSQL_PASS")
+
+	endpoints := strings.Split(etcd_endpoints, ",")
 	etcdcli := petcd.NewEtcdCli(endpoints)
 
-	etcdcli.SetPrefix("database")
-	etcdcli.SetService("parauser")
+	etcdcli.SetPrefix(etcd_prefix)
+	etcdcli.SetService(etcd_service)
 
-	etcdcli.SetProxyAddr("172.18.10.136")
-	etcdcli.SetProxyPort(13306)
-	etcdcli.SetProxyAdmin("admin")
-	etcdcli.SetProxyPass("admin")
+	etcdcli.SetProxyAddr(proxysql_addr)
+	pport, _ := strconv.Atoi(proxysql_port)
+	etcdcli.SetProxyPort(uint64(pport))
+	etcdcli.SetProxyAdmin(proxysql_user)
+	etcdcli.SetProxyPass(proxysql_pass)
 
 	fmt.Println(etcdcli.ProxySQLAddr, etcdcli.ProxySQLPort, etcdcli.ProxySQLAdmin, etcdcli.ProxySQLPass)
 
