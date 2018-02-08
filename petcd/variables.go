@@ -1,47 +1,68 @@
 package petcd
 
 import (
+	"encoding/base64"
 	"encoding/json"
-	"fmt"
 
-	"github.com/coreos/etcd/clientv3"
 	"github.com/imSQL/proxysql"
+	"github.com/juju/errors"
 )
 
-func UpdateOneVar(ev *clientv3.Event) {
-	fmt.Printf("Update %q : %q\n", ev.Kv.Key, ev.Kv.Value)
-	conn, err := proxysql.NewConn("172.18.10.136", 13306, "admin", "admin")
+// update a proxysql mysql_users information.
+// update successed return nil,else return error
+func UpdateOneVars(etcdcli *EtcdCli) error {
+
+	//new proxysql connection.
+	conn, err := proxysql.NewConn(etcdcli.ProxySQLAddr, etcdcli.ProxySQLPort, etcdcli.ProxySQLAdmin, etcdcli.ProxySQLPass)
 	if err != nil {
-		fmt.Println(err)
+		return errors.Trace(err)
 	}
 	conn.SetCharset("utf8")
 	conn.SetCollation("utf8_general_ci")
 	conn.MakeDBI()
 
+	// open proxysql connection
 	db, err := conn.OpenConn()
 	if err != nil {
-		fmt.Println(err)
+		return errors.Trace(err)
 	}
 
+	// get servers information.
 	var tmpsrv proxysql.Servers
-	if err := json.Unmarshal(ev.Kv.Value, &tmpsrv); err != nil {
-		fmt.Println(err)
+	// key is username ,like user01
+	// value is proxysql.Users []byte type.
+	//key, _ := base64.StdEncoding.DecodeString(etcdcli.Key)
+	value, _ := base64.StdEncoding.DecodeString(etcdcli.Value)
+
+	// []byte to proxysql.Users struct.
+	if err := json.Unmarshal(value, &tmpsrv); err != nil {
+		return errors.Trace(err)
 	}
 
+	// new user handler
 	newsrv, err := proxysql.NewServer(tmpsrv.HostGroupId, tmpsrv.HostName, tmpsrv.Port)
 	if err != nil {
-		fmt.Println(err)
+		return errors.Trace(err)
 	}
 
+	newsrv.SetServerStatus(tmpsrv.Status)
+	newsrv.SetServerWeight(tmpsrv.Weight)
+	newsrv.SetServerCompression(tmpsrv.Compression)
 	newsrv.SetServerMaxConnection(tmpsrv.MaxConnections)
+	newsrv.SetServerMaxReplicationLag(tmpsrv.MaxReplicationLag)
+	newsrv.SetServerUseSSL(tmpsrv.UseSsl)
+	newsrv.SetServerMaxLatencyMs(tmpsrv.MaxLatencyMs)
+	newsrv.SetServersComment(tmpsrv.Comment)
 
 	err = newsrv.UpdateOneServerInfo(db)
 	if err != nil {
-		fmt.Println(err)
+		return errors.Trace(err)
 	}
 
 	err = conn.CloseConn(db)
 	if err != nil {
-		fmt.Println(err)
+		return errors.Trace(err)
 	}
+
+	return nil
 }

@@ -110,11 +110,47 @@ func main() {
 
 				}
 			case "queryrules":
-				fmt.Println("queryrules")
+				switch ev.Type {
+				case mvccpb.PUT:
+					switch {
+					case ev.IsCreate():
+						log.Println("CreateOneQr ", etcdcli.Root+"/queryrules/"+etcdcli.Key, etcdcli.Value)
+						petcd.CreateOneQr(etcdcli)
+					default:
+						log.Println("UpdateOneQr", etcdcli.Root+"/queryrules/"+etcdcli.Key, etcdcli.Value)
+						petcd.UpdateOneQr(etcdcli)
+					}
+				case mvccpb.DELETE:
+					log.Println("DeleteOneQr", etcdcli.Root+"/queryrules/"+etcdcli.Key, etcdcli.Value)
+					petcd.DeleteOneQr(etcdcli)
+				default:
+
+				}
 			case "schedulers":
-				fmt.Println("schedulers")
+				switch ev.Type {
+				case mvccpb.PUT:
+					switch {
+					case ev.IsCreate():
+						log.Println("CreateOneSchld", etcdcli.Root+"/schedulers/"+etcdcli.Key, etcdcli.Value)
+						petcd.CreateOneSchld(etcdcli)
+					default:
+						log.Println("UpdateOneSchld", etcdcli.Root+"/schedulers/"+etcdcli.Key, etcdcli.Value)
+						petcd.UpdateOneSchld(etcdcli)
+					}
+				case mvccpb.DELETE:
+					log.Println("DeleteOneSchld", etcdcli.Root+"/schedulers/"+etcdcli.Key, etcdcli.Value)
+					petcd.DeleteOneSchld(etcdcli)
+				default:
+
+				}
 			case "variables":
-				fmt.Println("variables")
+				switch ev.Type {
+				case mvccpb.PUT:
+					log.Println("UpdateOneVariable", etcdcli.Root+"/variables/"+etcdcli.Key, etcdcli.Value)
+					petcd.UpdateOneVars(etcdcli)
+				default:
+
+				}
 			default:
 				fmt.Println("node[3] " + node[3])
 			}

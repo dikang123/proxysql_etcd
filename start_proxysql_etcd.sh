@@ -8,4 +8,7 @@ export PROXYSQL_PORT="13306"
 export PROXYSQL_USER="admin"
 export PROXYSQL_PASS="admin"
 
-go run main.go
+go build
+
+./proxysql_etcd
+
