@@ -55,7 +55,7 @@ func NewEtcdCli(endpoints []string) *EtcdCli {
 	// example:  /database/user_center/users/cmVsYXRpb25fc2VydmljZQ== eyJpZCI6MSwidXNlcm5hbWUiOiJ0aWFubGVpIiwiYWdlIjozMywiYWRkcmVzcyI6ImJlaWppbmcifQ==
 	etcdcli.Prefix = "database"
 	etcdcli.Service = "users"
-	etcdcli.Type = "users"
+	etcdcli.Type = ""
 	etcdcli.Key = ""
 	etcdcli.Value = ""
 
@@ -108,7 +108,11 @@ func (cli *EtcdCli) SetEtcdValue(val string) {
 
 // prefix+service
 func (cli *EtcdCli) MakeWatchRoot() {
-	cli.Root = fmt.Sprintf("/%s/%s/%s", cli.Prefix, cli.Service, cli.Type)
+	if len(cli.Type) == 0 {
+		cli.Root = fmt.Sprintf("/%s/%s", cli.Prefix, cli.Service)
+	} else {
+		cli.Root = fmt.Sprintf("/%s/%s/%s", cli.Prefix, cli.Service, cli.Type)
+	}
 }
 
 // set proxysql dbi

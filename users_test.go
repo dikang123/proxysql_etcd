@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"strconv"
 	"testing"
@@ -16,12 +17,13 @@ import (
 )
 
 func TestUser(t *testing.T) {
-	// set etcd dbi
-	endpoints := []string{"172.18.10.136:2379"}
-	etcdcli := petcd.NewEtcdCli(endpoints)
 
-	etcdcli.SetPrefix("database")
-	etcdcli.SetService("parauser")
+	flag.Parse()
+	// set etcd dbi
+	etcdcli := petcd.NewEtcdCli([]string{*etcd_points})
+
+	etcdcli.SetPrefix(*etcd_prefix)
+	etcdcli.SetService(*etcd_service)
 	etcdcli.SetEtcdType("users")
 	etcdcli.MakeWatchRoot()
 

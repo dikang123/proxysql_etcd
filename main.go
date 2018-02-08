@@ -18,15 +18,6 @@ func main() {
 
 	etcdcli.SetPrefix("database")
 	etcdcli.SetService("parauser")
-	etcdcli.SetEtcdType("users")
-	etcdcli.MakeWatchRoot()
-
-	cli, err := etcdcli.OpenEtcd()
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	fmt.Println(etcdcli.ProxySQLAddr, etcdcli.ProxySQLPort, etcdcli.ProxySQLAdmin, etcdcli.ProxySQLPass)
 
 	etcdcli.SetProxyAddr("172.18.10.136")
 	etcdcli.SetProxyPort(13306)
@@ -35,10 +26,16 @@ func main() {
 
 	fmt.Println(etcdcli.ProxySQLAddr, etcdcli.ProxySQLPort, etcdcli.ProxySQLAdmin, etcdcli.ProxySQLPass)
 
+	etcdcli.MakeWatchRoot()
+
 	// see https://github.com/coreos/etcd/blob/master/clientv3/example_watch_test.go
 	log.Println("Running proxysql_etcd as watch mode. the watching path is ", etcdcli.Root)
 
-	log.Println("Syncing Users informations into proxysql.")
+	cli, err := etcdcli.OpenEtcd()
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	err = petcd.SyncUserToProxy(etcdcli, cli)
 	if err != nil {
 		fmt.Println(err)
@@ -65,21 +62,36 @@ func main() {
 				case mvccpb.PUT:
 					switch {
 					case ev.IsCreate():
-						log.Println("CreateOneUser ", etcdcli.Key, etcdcli.Value)
+						log.Println("CreateOneUser ", etcdcli.Root+"/"+etcdcli.Key, etcdcli.Value)
 						petcd.CreateOneUser(etcdcli)
 					default:
-						log.Println("UpdateOneUser ", etcdcli.Key, etcdcli.Value)
+						log.Println("UpdateOneUser ", etcdcli.Root+"/"+etcdcli.Key, etcdcli.Value)
 						petcd.UpdateOneUser(etcdcli)
 					}
 				case mvccpb.DELETE:
-					log.Println("DeleteOneUser ", etcdcli.Key, etcdcli.Value)
+					log.Println("DeleteOneUser ", etcdcli.Root+"/"+etcdcli.Key, etcdcli.Value)
 					petcd.DeleteOneUser(etcdcli)
 				default:
 
 				}
 
 			case "servers":
-				fmt.Println("servers")
+				switch ev.Type {
+				case mvccpb.PUT:
+					switch {
+					case ev.IsCreate():
+						log.Println("CreateOneServer ", etcdcli.Root+"/"+etcdcli.Key, etcdcli.Value)
+						petcd.CreateOneServer(etcdcli)
+					default:
+						log.Println("UpdateOneServer ", etcdcli.Root+"/"+etcdcli.Key, etcdcli.Value)
+						petcd.UpdateOneServer(etcdcli)
+					}
+				case mvccpb.DELETE:
+					log.Println("DeleteOneServer ", etcdcli.Root+"/"+etcdcli.Key, etcdcli.Value)
+					petcd.DeleteOneServer(etcdcli)
+				default:
+
+				}
 			case "queryrules":
 				fmt.Println("queryrules")
 			case "schedulers":
@@ -91,6 +103,7 @@ func main() {
 			}
 		}
 	}
+
 	err = etcdcli.CloseEtcd(cli)
 	if err != nil {
 		fmt.Println(err)

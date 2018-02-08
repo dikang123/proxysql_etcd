@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"strconv"
 	"testing"
@@ -15,13 +16,18 @@ import (
 	"github.com/imSQL/proxysql_etcd/petcd"
 )
 
-func TestServer(t *testing.T) {
-	// set etcd dbi
-	endpoints := []string{"172.18.10.136:2379"}
-	etcdcli := petcd.NewEtcdCli(endpoints)
+var etcd_points = flag.String("addr", "127.0.0.1:2379", "etcd endpoints,default 127.0.0.1:2379")
+var etcd_prefix = flag.String("prefix", "database", "etcd watch root,default database")
+var etcd_service = flag.String("service", "users", "etcd watch service name,default users")
 
-	etcdcli.SetPrefix("database")
-	etcdcli.SetService("parauser")
+func TestServer(t *testing.T) {
+
+	flag.Parse()
+	// set etcd dbi
+	etcdcli := petcd.NewEtcdCli([]string{*etcd_points})
+
+	etcdcli.SetPrefix(*etcd_prefix)
+	etcdcli.SetService(*etcd_service)
 	etcdcli.SetEtcdType("servers")
 	etcdcli.MakeWatchRoot()
 
