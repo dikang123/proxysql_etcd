@@ -109,6 +109,23 @@ func main() {
 				default:
 
 				}
+			case "rhgs":
+				switch ev.Type {
+				case mvccpb.PUT:
+					switch {
+					case ev.IsCreate():
+						log.Println("CreateOneRhg", etcdcli.Root+"/rhgs/"+etcdcli.Key, etcdcli.Value)
+						petcd.CreateOneRhg(etcdcli)
+					default:
+						log.Println("UpdateOneRhg", etcdcli.Root+"/rhgs/"+etcdcli.Key, etcdcli.Value)
+						petcd.UpdateOneRhg(etcdcli)
+					}
+				case mvccpb.DELETE:
+					log.Println("DeleteOneRhg", etcdcli.Root+"/rhgs/"+etcdcli.Key, etcdcli.Value)
+					petcd.DeleteOneRhg(etcdcli)
+				default:
+
+				}
 			case "queryrules":
 				switch ev.Type {
 				case mvccpb.PUT:
