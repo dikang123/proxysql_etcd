@@ -32,7 +32,7 @@ func TestVariables(t *testing.T) {
 
 	cli, err := etcdcli.OpenEtcd()
 	if err != nil {
-		fmt.Println(err)
+		t.Error(err)
 	}
 
 	key := []byte(vars.VariablesName)
