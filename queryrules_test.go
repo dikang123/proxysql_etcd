@@ -31,7 +31,7 @@ func TestQr(t *testing.T) {
 		t.Error(err)
 	}
 
-	for i := 0; i < 100; i++ {
+	for i := 1; i < 100; i++ {
 
 		// new users handler
 		user_name := fmt.Sprintf("user%d", i)
@@ -43,6 +43,9 @@ func TestQr(t *testing.T) {
 		qr01.SetQrRuleid(uint64(i))
 
 		rule_id := fmt.Sprintf("%d", qr01.Rule_id)
+
+		fmt.Println("rule_id = ", rule_id, "qr01.Rule_id=", qr01.Rule_id)
+
 		key := []byte(rule_id)
 		if err != nil {
 			t.Error(err)
@@ -69,7 +72,19 @@ func TestQr(t *testing.T) {
 			t.Error(err)
 		}
 
-		fmt.Println("Put success")
+		fmt.Println("Create success")
+
+		qr01.SetQrActive(1)
+		qr01.SetQrDigest("^SELECT")
+
+		value, err = json.Marshal(qr01)
+		if err != nil {
+			t.Error(err)
+		}
+
+		// base64
+		encodeKey = base64.StdEncoding.EncodeToString(key)
+		encodeValue = base64.StdEncoding.EncodeToString(value)
 
 		// update user
 		ctx, cancel = context.WithTimeout(context.Background(), etcdcli.RequestTimeout)
@@ -79,7 +94,7 @@ func TestQr(t *testing.T) {
 			t.Error(err)
 		}
 
-		fmt.Println("Put success")
+		fmt.Println("Update Success")
 
 		// delete user
 		fmt.Println(etcdcli.Root + "/" + encodeKey)

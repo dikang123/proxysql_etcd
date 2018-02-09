@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"strconv"
 
 	"github.com/coreos/etcd/clientv3"
 	"github.com/imSQL/proxysql"
@@ -268,44 +269,16 @@ func DeleteOneQr(etcdcli *EtcdCli) error {
 	var tmpqr proxysql.QueryRules
 	// key is username ,like user01
 	// value is proxysql.Users []byte type.
-	//key, _ := base64.StdEncoding.DecodeString(etcdcli.Key)
-	value, _ := base64.StdEncoding.DecodeString(etcdcli.Value)
+	key, _ := base64.StdEncoding.DecodeString(etcdcli.Key)
+	//value, _ := base64.StdEncoding.DecodeString(etcdcli.Value)
 
-	// []byte to proxysql.Users struct.
-	if err := json.Unmarshal(value, &tmpqr); err != nil {
-		return errors.Trace(err)
-	}
-
-	// new user handler
 	newqr, err := proxysql.NewQr(tmpqr.Username, tmpqr.Destination_hostgroup)
 	if err != nil {
 		return errors.Trace(err)
 	}
 
-	newqr.SetQrRuleid(tmpqr.Rule_id)
-	newqr.SetQrProxyAddr(tmpqr.Proxy_addr)
-	newqr.SetProxyPort(tmpqr.Proxy_port)
-	newqr.SetQrActive(tmpqr.Active)
-	newqr.SetQrApply(tmpqr.Apply)
-	newqr.SetQrCacheTTL(tmpqr.Cache_ttl)
-	newqr.SetQrClientAddr(tmpqr.Client_addr)
-	newqr.SetQrDelay(tmpqr.Delay)
-	newqr.SetQrDestHostGroup(tmpqr.Destination_hostgroup)
-	newqr.SetQrDigest(tmpqr.Digest)
-	newqr.SetQrErrorMsg(tmpqr.Error_msg)
-	newqr.SetQrFlagIN(tmpqr.FlagIN)
-	newqr.SetQrFlagOut(tmpqr.FlagOUT)
-	newqr.SetQrLog(tmpqr.Log)
-	newqr.SetQrMatchDigest(tmpqr.Match_digest)
-	newqr.SetQrMatchPattern(tmpqr.Match_pattern)
-	newqr.SetQrMirrorFlagOUT(tmpqr.Mirror_flagOUT)
-	newqr.SetQrMirrorHostgroup(tmpqr.Mirror_hostgroup)
-	newqr.SetQrNegateMatchPattern(tmpqr.Negate_match_pattern)
-	newqr.SetQrReconnect(tmpqr.Reconnect)
-	newqr.SetQrReplacePattern(tmpqr.Replace_pattern)
-	newqr.SetQrRetries(tmpqr.Retries)
-	newqr.SetQrSchemaname(tmpqr.Schemaname)
-	newqr.SetQrTimeOut(tmpqr.Timeout)
+	rule_id, _ := strconv.Atoi(string(key))
+	newqr.SetQrRuleid(uint64(rule_id))
 
 	err = newqr.DeleteOneQr(db)
 	if err != nil {
