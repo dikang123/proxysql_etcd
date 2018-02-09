@@ -32,7 +32,7 @@ func TestUser(t *testing.T) {
 		fmt.Println(err)
 	}
 
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < 100; i++ {
 
 		// new users handler
 		user01, err := proxysql.NewUser("devtest"+strconv.Itoa(i), "devtest"+strconv.Itoa(i), 0, "devtest"+strconv.Itoa(i))

@@ -31,7 +31,7 @@ func TestScheduler(t *testing.T) {
 		fmt.Println(err)
 	}
 
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < 100; i++ {
 
 		// new users handler
 		file_name := fmt.Sprintf("file%d", i)
@@ -39,6 +39,8 @@ func TestScheduler(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
+
+		schld01.SetSchedulerId(int64(i))
 
 		schld_id := fmt.Sprintf("%d", schld01.Id)
 		key := []byte(schld_id)

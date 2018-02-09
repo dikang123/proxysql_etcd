@@ -31,7 +31,7 @@ func TestRHG(t *testing.T) {
 		fmt.Println(err)
 	}
 
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < 100; i++ {
 
 		// new users handler
 		rhg, err := proxysql.NewRHG(uint64(i), uint64(i))

@@ -31,7 +31,7 @@ func TestQr(t *testing.T) {
 		fmt.Println(err)
 	}
 
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < 100; i++ {
 
 		// new users handler
 		user_name := fmt.Sprintf("user%d", i)
@@ -39,6 +39,8 @@ func TestQr(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
+
+		qr01.SetQrRuleid(uint64(i))
 
 		rule_id := fmt.Sprintf("%d", qr01.Rule_id)
 		key := []byte(rule_id)

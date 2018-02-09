@@ -36,7 +36,7 @@ func TestServer(t *testing.T) {
 		fmt.Println(err)
 	}
 
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < 100; i++ {
 
 		// new users handler
 		srv01, err := proxysql.NewServer(uint64(i), "127.0.0.1", uint64(3301+i))
