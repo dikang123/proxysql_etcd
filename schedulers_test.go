@@ -31,11 +31,11 @@ func TestScheduler(t *testing.T) {
 		t.Error(err)
 	}
 
-	for i := 0; i < 100; i++ {
+	for i := 1; i < 100; i++ {
 
 		// new users handler
 		file_name := fmt.Sprintf("file%d", i)
-		schld01, err := proxysql.NewSch(file_name, int64(i))
+		schld01, err := proxysql.NewSch(file_name, int64(i)*100)
 		if err != nil {
 			t.Error(err)
 		}

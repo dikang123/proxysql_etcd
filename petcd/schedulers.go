@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"strconv"
 
 	"github.com/coreos/etcd/clientv3"
 	"github.com/imSQL/proxysql"
@@ -126,6 +127,8 @@ func CreateOneSchld(etcdcli *EtcdCli) error {
 	newschld.SetSchedulerArg4(tmpschld.Arg4)
 	newschld.SetSchedulerArg5(tmpschld.Arg5)
 
+	fmt.Println(newschld)
+
 	err = newschld.AddOneScheduler(db)
 	if err != nil {
 		return errors.Trace(err)
@@ -217,31 +220,26 @@ func DeleteOneSchld(etcdcli *EtcdCli) error {
 	}
 
 	// get servers information.
-	var tmpschld proxysql.Schedulers
+	//var tmpschld proxysql.Schedulers
 	// key is username ,like user01
 	// value is proxysql.Users []byte type.
-	//key, _ := base64.StdEncoding.DecodeString(etcdcli.Key)
-	value, _ := base64.StdEncoding.DecodeString(etcdcli.Value)
+	key, _ := base64.StdEncoding.DecodeString(etcdcli.Key)
+	//value, _ := base64.StdEncoding.DecodeString(etcdcli.Value)
 
 	// []byte to proxysql.Users struct.
-	if err := json.Unmarshal(value, &tmpschld); err != nil {
-		return errors.Trace(err)
-	}
+	//if err := json.Unmarshal(value, &tmpschld); err != nil {
+	//	return errors.Trace(err)
+	//}
+
+	schld_id, _ := strconv.Atoi(string(key))
 
 	// new user handler
-	newschld, err := proxysql.NewSch(tmpschld.FileName, tmpschld.IntervalMs)
+	newschld, err := proxysql.NewSch("ls", 1)
 	if err != nil {
 		return errors.Trace(err)
 	}
 
-	newschld.SetSchedulerId(tmpschld.Id)
-	newschld.SetSchedulerIntervalMs(tmpschld.IntervalMs)
-	newschld.SetSchedulerActive(tmpschld.Active)
-	newschld.SetSchedulerArg1(tmpschld.Arg1)
-	newschld.SetSchedulerArg2(tmpschld.Arg2)
-	newschld.SetSchedulerArg3(tmpschld.Arg3)
-	newschld.SetSchedulerArg4(tmpschld.Arg4)
-	newschld.SetSchedulerArg5(tmpschld.Arg5)
+	newschld.SetSchedulerId(int64(schld_id))
 
 	err = newschld.DeleteOneScheduler(db)
 	if err != nil {
