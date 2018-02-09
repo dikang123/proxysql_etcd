@@ -5,6 +5,8 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"strconv"
+	"strings"
 
 	"github.com/coreos/etcd/clientv3"
 	"github.com/imSQL/proxysql"
@@ -202,26 +204,22 @@ func DeleteOneRhg(etcdcli *EtcdCli) error {
 	}
 
 	// get servers information.
-	var tmprhg proxysql.ReplicationHostgroup
+	//var tmprhg proxysql.ReplicationHostgroup
 	// key is username ,like user01
 	// value is proxysql.Users []byte type.
-	//key, _ := base64.StdEncoding.DecodeString(etcdcli.Key)
-	value, _ := base64.StdEncoding.DecodeString(etcdcli.Value)
+	key, _ := base64.StdEncoding.DecodeString(etcdcli.Key)
+	//value, _ := base64.StdEncoding.DecodeString(etcdcli.Value)
 
-	// []byte to proxysql.Users struct.
-	if err := json.Unmarshal(value, &tmprhg); err != nil {
-		return errors.Trace(err)
-	}
+	writer_hostgroup_id, _ := strconv.Atoi(strings.Split(string(key), "|")[0])
+	reader_hostgroup_id, _ := strconv.Atoi(strings.Split(string(key), "|")[1])
+
+	fmt.Println(writer_hostgroup_id, reader_hostgroup_id)
 
 	// new user handler
-	newrhg, err := proxysql.NewRHG(tmprhg.WriterHostgroup, tmprhg.ReaderHostgroup)
+	newrhg, err := proxysql.NewRHG(uint64(writer_hostgroup_id), uint64(reader_hostgroup_id))
 	if err != nil {
 		return errors.Trace(err)
 	}
-
-	newrhg.SetWriterHostGroup(tmprhg.WriterHostgroup)
-	newrhg.SetReaderHostGroup(tmprhg.ReaderHostgroup)
-	newrhg.SetComment(tmprhg.Comment)
 
 	err = newrhg.DeleteOneRHG(db)
 	if err != nil {

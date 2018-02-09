@@ -34,12 +34,12 @@ func TestRHG(t *testing.T) {
 	for i := 0; i < 100; i++ {
 
 		// new users handler
-		rhg, err := proxysql.NewRHG(uint64(i), uint64(i))
+		rhg, err := proxysql.NewRHG(uint64(i), uint64(i)+1)
 		if err != nil {
 			t.Error(err)
 		}
 
-		rw := fmt.Sprintf("%s|%s", rhg.WriterHostgroup, rhg.ReaderHostgroup)
+		rw := fmt.Sprintf("%d|%d", rhg.WriterHostgroup, rhg.ReaderHostgroup)
 		key := []byte(rw)
 		if err != nil {
 			t.Error(err)
