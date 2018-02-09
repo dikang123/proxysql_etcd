@@ -28,33 +28,19 @@ func UpdateOneVars(etcdcli *EtcdCli) error {
 	}
 
 	// get servers information.
-	var tmpsrv proxysql.Servers
+	var tmpvrs proxysql.Variables
 	// key is username ,like user01
 	// value is proxysql.Users []byte type.
 	//key, _ := base64.StdEncoding.DecodeString(etcdcli.Key)
 	value, _ := base64.StdEncoding.DecodeString(etcdcli.Value)
 
 	// []byte to proxysql.Users struct.
-	if err := json.Unmarshal(value, &tmpsrv); err != nil {
+	if err := json.Unmarshal(value, &tmpvrs); err != nil {
 		return errors.Trace(err)
 	}
 
-	// new user handler
-	newsrv, err := proxysql.NewServer(tmpsrv.HostGroupId, tmpsrv.HostName, tmpsrv.Port)
-	if err != nil {
-		return errors.Trace(err)
-	}
-
-	newsrv.SetServerStatus(tmpsrv.Status)
-	newsrv.SetServerWeight(tmpsrv.Weight)
-	newsrv.SetServerCompression(tmpsrv.Compression)
-	newsrv.SetServerMaxConnection(tmpsrv.MaxConnections)
-	newsrv.SetServerMaxReplicationLag(tmpsrv.MaxReplicationLag)
-	newsrv.SetServerUseSSL(tmpsrv.UseSsl)
-	newsrv.SetServerMaxLatencyMs(tmpsrv.MaxLatencyMs)
-	newsrv.SetServersComment(tmpsrv.Comment)
-
-	err = newsrv.UpdateOneServerInfo(db)
+	//update on variable.
+	err = proxysql.UpdateOneConfig(db, tmpvrs.VariablesName, tmpvrs.Value)
 	if err != nil {
 		return errors.Trace(err)
 	}

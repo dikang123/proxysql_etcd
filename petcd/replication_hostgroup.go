@@ -41,33 +41,28 @@ func SyncRhgToProxy(etcdcli *EtcdCli, cli *clientv3.Client) error {
 
 	for _, evs := range resp.Kvs {
 		// get servers information.
-		var tmpsrv proxysql.Servers
+		var tmprhg proxysql.ReplicationHostgroup
 		// key is username ,like user01
 		// value is proxysql.Users []byte type.
 		//key, _ := base64.StdEncoding.DecodeString(string(evs.Key))
 		value, _ := base64.StdEncoding.DecodeString(string(evs.Value))
 
 		// []byte to proxysql.Users struct.
-		if err := json.Unmarshal(value, &tmpsrv); err != nil {
+		if err := json.Unmarshal(value, &tmprhg); err != nil {
 			return errors.Trace(err)
 		}
 
 		// new user handler
-		newsrv, err := proxysql.NewServer(tmpsrv.HostGroupId, tmpsrv.HostName, tmpsrv.Port)
+		newrhg, err := proxysql.NewRHG(tmprhg.WriterHostgroup, tmprhg.ReaderHostgroup)
 		if err != nil {
 			return errors.Trace(err)
 		}
 
-		newsrv.SetServerStatus(tmpsrv.Status)
-		newsrv.SetServerWeight(tmpsrv.Weight)
-		newsrv.SetServerCompression(tmpsrv.Compression)
-		newsrv.SetServerMaxConnection(tmpsrv.MaxConnections)
-		newsrv.SetServerMaxReplicationLag(tmpsrv.MaxReplicationLag)
-		newsrv.SetServerUseSSL(tmpsrv.UseSsl)
-		newsrv.SetServerMaxLatencyMs(tmpsrv.MaxLatencyMs)
-		newsrv.SetServersComment(tmpsrv.Comment)
+		newrhg.SetWriterHostGroup(tmprhg.WriterHostgroup)
+		newrhg.SetReaderHostGroup(tmprhg.ReaderHostgroup)
+		newrhg.SetComment(tmprhg.Comment)
 
-		err = newsrv.AddOneServers(db)
+		err = newrhg.AddOneRHG(db)
 		if err != nil {
 			return errors.Trace(err)
 		}
@@ -100,33 +95,28 @@ func CreateOneRhg(etcdcli *EtcdCli) error {
 	}
 
 	// get servers information.
-	var tmpsrv proxysql.Servers
+	var tmprhg proxysql.ReplicationHostgroup
 	// key is username ,like user01
 	// value is proxysql.Users []byte type.
 	//key, _ := base64.StdEncoding.DecodeString(etcdcli.Key)
 	value, _ := base64.StdEncoding.DecodeString(etcdcli.Value)
 
 	// []byte to proxysql.Users struct.
-	if err := json.Unmarshal(value, &tmpsrv); err != nil {
+	if err := json.Unmarshal(value, &tmprhg); err != nil {
 		return errors.Trace(err)
 	}
 
 	// new user handler
-	newsrv, err := proxysql.NewServer(tmpsrv.HostGroupId, tmpsrv.HostName, tmpsrv.Port)
+	newrhg, err := proxysql.NewRHG(tmprhg.WriterHostgroup, tmprhg.ReaderHostgroup)
 	if err != nil {
 		return errors.Trace(err)
 	}
 
-	newsrv.SetServerStatus(tmpsrv.Status)
-	newsrv.SetServerWeight(tmpsrv.Weight)
-	newsrv.SetServerCompression(tmpsrv.Compression)
-	newsrv.SetServerMaxConnection(tmpsrv.MaxConnections)
-	newsrv.SetServerMaxReplicationLag(tmpsrv.MaxReplicationLag)
-	newsrv.SetServerUseSSL(tmpsrv.UseSsl)
-	newsrv.SetServerMaxLatencyMs(tmpsrv.MaxLatencyMs)
-	newsrv.SetServersComment(tmpsrv.Comment)
+	newrhg.SetWriterHostGroup(tmprhg.WriterHostgroup)
+	newrhg.SetReaderHostGroup(tmprhg.ReaderHostgroup)
+	newrhg.SetComment(tmprhg.Comment)
 
-	err = newsrv.AddOneServers(db)
+	err = newrhg.AddOneRHG(db)
 	if err != nil {
 		return errors.Trace(err)
 	}
@@ -159,33 +149,28 @@ func UpdateOneRhg(etcdcli *EtcdCli) error {
 	}
 
 	// get servers information.
-	var tmpsrv proxysql.Servers
+	var tmprhg proxysql.ReplicationHostgroup
 	// key is username ,like user01
 	// value is proxysql.Users []byte type.
 	//key, _ := base64.StdEncoding.DecodeString(etcdcli.Key)
 	value, _ := base64.StdEncoding.DecodeString(etcdcli.Value)
 
 	// []byte to proxysql.Users struct.
-	if err := json.Unmarshal(value, &tmpsrv); err != nil {
+	if err := json.Unmarshal(value, &tmprhg); err != nil {
 		return errors.Trace(err)
 	}
 
 	// new user handler
-	newsrv, err := proxysql.NewServer(tmpsrv.HostGroupId, tmpsrv.HostName, tmpsrv.Port)
+	newrhg, err := proxysql.NewRHG(tmprhg.WriterHostgroup, tmprhg.ReaderHostgroup)
 	if err != nil {
 		return errors.Trace(err)
 	}
 
-	newsrv.SetServerStatus(tmpsrv.Status)
-	newsrv.SetServerWeight(tmpsrv.Weight)
-	newsrv.SetServerCompression(tmpsrv.Compression)
-	newsrv.SetServerMaxConnection(tmpsrv.MaxConnections)
-	newsrv.SetServerMaxReplicationLag(tmpsrv.MaxReplicationLag)
-	newsrv.SetServerUseSSL(tmpsrv.UseSsl)
-	newsrv.SetServerMaxLatencyMs(tmpsrv.MaxLatencyMs)
-	newsrv.SetServersComment(tmpsrv.Comment)
+	newrhg.SetWriterHostGroup(tmprhg.WriterHostgroup)
+	newrhg.SetReaderHostGroup(tmprhg.ReaderHostgroup)
+	newrhg.SetComment(tmprhg.Comment)
 
-	err = newsrv.UpdateOneServerInfo(db)
+	err = newrhg.UpdateOneRHG(db)
 	if err != nil {
 		return errors.Trace(err)
 	}
@@ -217,33 +202,28 @@ func DeleteOneRhg(etcdcli *EtcdCli) error {
 	}
 
 	// get servers information.
-	var tmpsrv proxysql.Servers
+	var tmprhg proxysql.ReplicationHostgroup
 	// key is username ,like user01
 	// value is proxysql.Users []byte type.
 	//key, _ := base64.StdEncoding.DecodeString(etcdcli.Key)
 	value, _ := base64.StdEncoding.DecodeString(etcdcli.Value)
 
 	// []byte to proxysql.Users struct.
-	if err := json.Unmarshal(value, &tmpsrv); err != nil {
+	if err := json.Unmarshal(value, &tmprhg); err != nil {
 		return errors.Trace(err)
 	}
 
 	// new user handler
-	newsrv, err := proxysql.NewServer(tmpsrv.HostGroupId, tmpsrv.HostName, tmpsrv.Port)
+	newrhg, err := proxysql.NewRHG(tmprhg.WriterHostgroup, tmprhg.ReaderHostgroup)
 	if err != nil {
 		return errors.Trace(err)
 	}
 
-	newsrv.SetServerStatus(tmpsrv.Status)
-	newsrv.SetServerWeight(tmpsrv.Weight)
-	newsrv.SetServerCompression(tmpsrv.Compression)
-	newsrv.SetServerMaxConnection(tmpsrv.MaxConnections)
-	newsrv.SetServerMaxReplicationLag(tmpsrv.MaxReplicationLag)
-	newsrv.SetServerUseSSL(tmpsrv.UseSsl)
-	newsrv.SetServerMaxLatencyMs(tmpsrv.MaxLatencyMs)
-	newsrv.SetServersComment(tmpsrv.Comment)
+	newrhg.SetWriterHostGroup(tmprhg.WriterHostgroup)
+	newrhg.SetReaderHostGroup(tmprhg.ReaderHostgroup)
+	newrhg.SetComment(tmprhg.Comment)
 
-	err = newsrv.DeleteOneServers(db)
+	err = newrhg.DeleteOneRHG(db)
 	if err != nil {
 		return errors.Trace(err)
 	}

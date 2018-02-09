@@ -41,33 +41,49 @@ func SyncQrToProxy(etcdcli *EtcdCli, cli *clientv3.Client) error {
 
 	for _, evs := range resp.Kvs {
 		// get servers information.
-		var tmpsrv proxysql.Servers
+		var tmpqr proxysql.QueryRules
 		// key is username ,like user01
 		// value is proxysql.Users []byte type.
 		//key, _ := base64.StdEncoding.DecodeString(string(evs.Key))
 		value, _ := base64.StdEncoding.DecodeString(string(evs.Value))
 
 		// []byte to proxysql.Users struct.
-		if err := json.Unmarshal(value, &tmpsrv); err != nil {
+		if err := json.Unmarshal(value, &tmpqr); err != nil {
 			return errors.Trace(err)
 		}
 
 		// new user handler
-		newsrv, err := proxysql.NewServer(tmpsrv.HostGroupId, tmpsrv.HostName, tmpsrv.Port)
+		newqr, err := proxysql.NewQr(tmpqr.Username, tmpqr.Destination_hostgroup)
 		if err != nil {
 			return errors.Trace(err)
 		}
 
-		newsrv.SetServerStatus(tmpsrv.Status)
-		newsrv.SetServerWeight(tmpsrv.Weight)
-		newsrv.SetServerCompression(tmpsrv.Compression)
-		newsrv.SetServerMaxConnection(tmpsrv.MaxConnections)
-		newsrv.SetServerMaxReplicationLag(tmpsrv.MaxReplicationLag)
-		newsrv.SetServerUseSSL(tmpsrv.UseSsl)
-		newsrv.SetServerMaxLatencyMs(tmpsrv.MaxLatencyMs)
-		newsrv.SetServersComment(tmpsrv.Comment)
+		newqr.SetQrRuleid(tmpqr.Rule_id)
+		newqr.SetQrProxyAddr(tmpqr.Proxy_addr)
+		newqr.SetProxyPort(tmpqr.Proxy_port)
+		newqr.SetQrActive(tmpqr.Active)
+		newqr.SetQrApply(tmpqr.Apply)
+		newqr.SetQrCacheTTL(tmpqr.Cache_ttl)
+		newqr.SetQrClientAddr(tmpqr.Client_addr)
+		newqr.SetQrDelay(tmpqr.Delay)
+		newqr.SetQrDestHostGroup(tmpqr.Destination_hostgroup)
+		newqr.SetQrDigest(tmpqr.Digest)
+		newqr.SetQrErrorMsg(tmpqr.Error_msg)
+		newqr.SetQrFlagIN(tmpqr.FlagIN)
+		newqr.SetQrFlagOut(tmpqr.FlagOUT)
+		newqr.SetQrLog(tmpqr.Log)
+		newqr.SetQrMatchDigest(tmpqr.Match_digest)
+		newqr.SetQrMatchPattern(tmpqr.Match_pattern)
+		newqr.SetQrMirrorFlagOUT(tmpqr.Mirror_flagOUT)
+		newqr.SetQrMirrorHostgroup(tmpqr.Mirror_hostgroup)
+		newqr.SetQrNegateMatchPattern(tmpqr.Negate_match_pattern)
+		newqr.SetQrReconnect(tmpqr.Reconnect)
+		newqr.SetQrReplacePattern(tmpqr.Replace_pattern)
+		newqr.SetQrRetries(tmpqr.Retries)
+		newqr.SetQrSchemaname(tmpqr.Schemaname)
+		newqr.SetQrTimeOut(tmpqr.Timeout)
 
-		err = newsrv.AddOneServers(db)
+		err = newqr.AddOneQr(db)
 		if err != nil {
 			return errors.Trace(err)
 		}
@@ -100,33 +116,49 @@ func CreateOneQr(etcdcli *EtcdCli) error {
 	}
 
 	// get servers information.
-	var tmpsrv proxysql.Servers
+	var tmpqr proxysql.QueryRules
 	// key is username ,like user01
 	// value is proxysql.Users []byte type.
 	//key, _ := base64.StdEncoding.DecodeString(etcdcli.Key)
 	value, _ := base64.StdEncoding.DecodeString(etcdcli.Value)
 
 	// []byte to proxysql.Users struct.
-	if err := json.Unmarshal(value, &tmpsrv); err != nil {
+	if err := json.Unmarshal(value, &tmpqr); err != nil {
 		return errors.Trace(err)
 	}
 
 	// new user handler
-	newsrv, err := proxysql.NewServer(tmpsrv.HostGroupId, tmpsrv.HostName, tmpsrv.Port)
+	newqr, err := proxysql.NewQr(tmpqr.Username, tmpqr.Destination_hostgroup)
 	if err != nil {
 		return errors.Trace(err)
 	}
 
-	newsrv.SetServerStatus(tmpsrv.Status)
-	newsrv.SetServerWeight(tmpsrv.Weight)
-	newsrv.SetServerCompression(tmpsrv.Compression)
-	newsrv.SetServerMaxConnection(tmpsrv.MaxConnections)
-	newsrv.SetServerMaxReplicationLag(tmpsrv.MaxReplicationLag)
-	newsrv.SetServerUseSSL(tmpsrv.UseSsl)
-	newsrv.SetServerMaxLatencyMs(tmpsrv.MaxLatencyMs)
-	newsrv.SetServersComment(tmpsrv.Comment)
+	newqr.SetQrRuleid(tmpqr.Rule_id)
+	newqr.SetQrProxyAddr(tmpqr.Proxy_addr)
+	newqr.SetProxyPort(tmpqr.Proxy_port)
+	newqr.SetQrActive(tmpqr.Active)
+	newqr.SetQrApply(tmpqr.Apply)
+	newqr.SetQrCacheTTL(tmpqr.Cache_ttl)
+	newqr.SetQrClientAddr(tmpqr.Client_addr)
+	newqr.SetQrDelay(tmpqr.Delay)
+	newqr.SetQrDestHostGroup(tmpqr.Destination_hostgroup)
+	newqr.SetQrDigest(tmpqr.Digest)
+	newqr.SetQrErrorMsg(tmpqr.Error_msg)
+	newqr.SetQrFlagIN(tmpqr.FlagIN)
+	newqr.SetQrFlagOut(tmpqr.FlagOUT)
+	newqr.SetQrLog(tmpqr.Log)
+	newqr.SetQrMatchDigest(tmpqr.Match_digest)
+	newqr.SetQrMatchPattern(tmpqr.Match_pattern)
+	newqr.SetQrMirrorFlagOUT(tmpqr.Mirror_flagOUT)
+	newqr.SetQrMirrorHostgroup(tmpqr.Mirror_hostgroup)
+	newqr.SetQrNegateMatchPattern(tmpqr.Negate_match_pattern)
+	newqr.SetQrReconnect(tmpqr.Reconnect)
+	newqr.SetQrReplacePattern(tmpqr.Replace_pattern)
+	newqr.SetQrRetries(tmpqr.Retries)
+	newqr.SetQrSchemaname(tmpqr.Schemaname)
+	newqr.SetQrTimeOut(tmpqr.Timeout)
 
-	err = newsrv.AddOneServers(db)
+	err = newqr.AddOneQr(db)
 	if err != nil {
 		return errors.Trace(err)
 	}
@@ -159,33 +191,49 @@ func UpdateOneQr(etcdcli *EtcdCli) error {
 	}
 
 	// get servers information.
-	var tmpsrv proxysql.Servers
+	var tmpqr proxysql.QueryRules
 	// key is username ,like user01
 	// value is proxysql.Users []byte type.
 	//key, _ := base64.StdEncoding.DecodeString(etcdcli.Key)
 	value, _ := base64.StdEncoding.DecodeString(etcdcli.Value)
 
 	// []byte to proxysql.Users struct.
-	if err := json.Unmarshal(value, &tmpsrv); err != nil {
+	if err := json.Unmarshal(value, &tmpqr); err != nil {
 		return errors.Trace(err)
 	}
 
 	// new user handler
-	newsrv, err := proxysql.NewServer(tmpsrv.HostGroupId, tmpsrv.HostName, tmpsrv.Port)
+	newqr, err := proxysql.NewQr(tmpqr.Username, tmpqr.Destination_hostgroup)
 	if err != nil {
 		return errors.Trace(err)
 	}
 
-	newsrv.SetServerStatus(tmpsrv.Status)
-	newsrv.SetServerWeight(tmpsrv.Weight)
-	newsrv.SetServerCompression(tmpsrv.Compression)
-	newsrv.SetServerMaxConnection(tmpsrv.MaxConnections)
-	newsrv.SetServerMaxReplicationLag(tmpsrv.MaxReplicationLag)
-	newsrv.SetServerUseSSL(tmpsrv.UseSsl)
-	newsrv.SetServerMaxLatencyMs(tmpsrv.MaxLatencyMs)
-	newsrv.SetServersComment(tmpsrv.Comment)
+	newqr.SetQrRuleid(tmpqr.Rule_id)
+	newqr.SetQrProxyAddr(tmpqr.Proxy_addr)
+	newqr.SetProxyPort(tmpqr.Proxy_port)
+	newqr.SetQrActive(tmpqr.Active)
+	newqr.SetQrApply(tmpqr.Apply)
+	newqr.SetQrCacheTTL(tmpqr.Cache_ttl)
+	newqr.SetQrClientAddr(tmpqr.Client_addr)
+	newqr.SetQrDelay(tmpqr.Delay)
+	newqr.SetQrDestHostGroup(tmpqr.Destination_hostgroup)
+	newqr.SetQrDigest(tmpqr.Digest)
+	newqr.SetQrErrorMsg(tmpqr.Error_msg)
+	newqr.SetQrFlagIN(tmpqr.FlagIN)
+	newqr.SetQrFlagOut(tmpqr.FlagOUT)
+	newqr.SetQrLog(tmpqr.Log)
+	newqr.SetQrMatchDigest(tmpqr.Match_digest)
+	newqr.SetQrMatchPattern(tmpqr.Match_pattern)
+	newqr.SetQrMirrorFlagOUT(tmpqr.Mirror_flagOUT)
+	newqr.SetQrMirrorHostgroup(tmpqr.Mirror_hostgroup)
+	newqr.SetQrNegateMatchPattern(tmpqr.Negate_match_pattern)
+	newqr.SetQrReconnect(tmpqr.Reconnect)
+	newqr.SetQrReplacePattern(tmpqr.Replace_pattern)
+	newqr.SetQrRetries(tmpqr.Retries)
+	newqr.SetQrSchemaname(tmpqr.Schemaname)
+	newqr.SetQrTimeOut(tmpqr.Timeout)
 
-	err = newsrv.UpdateOneServerInfo(db)
+	err = newqr.UpdateOneQrInfo(db)
 	if err != nil {
 		return errors.Trace(err)
 	}
@@ -217,33 +265,49 @@ func DeleteOneQr(etcdcli *EtcdCli) error {
 	}
 
 	// get servers information.
-	var tmpsrv proxysql.Servers
+	var tmpqr proxysql.QueryRules
 	// key is username ,like user01
 	// value is proxysql.Users []byte type.
 	//key, _ := base64.StdEncoding.DecodeString(etcdcli.Key)
 	value, _ := base64.StdEncoding.DecodeString(etcdcli.Value)
 
 	// []byte to proxysql.Users struct.
-	if err := json.Unmarshal(value, &tmpsrv); err != nil {
+	if err := json.Unmarshal(value, &tmpqr); err != nil {
 		return errors.Trace(err)
 	}
 
 	// new user handler
-	newsrv, err := proxysql.NewServer(tmpsrv.HostGroupId, tmpsrv.HostName, tmpsrv.Port)
+	newqr, err := proxysql.NewQr(tmpqr.Username, tmpqr.Destination_hostgroup)
 	if err != nil {
 		return errors.Trace(err)
 	}
 
-	newsrv.SetServerStatus(tmpsrv.Status)
-	newsrv.SetServerWeight(tmpsrv.Weight)
-	newsrv.SetServerCompression(tmpsrv.Compression)
-	newsrv.SetServerMaxConnection(tmpsrv.MaxConnections)
-	newsrv.SetServerMaxReplicationLag(tmpsrv.MaxReplicationLag)
-	newsrv.SetServerUseSSL(tmpsrv.UseSsl)
-	newsrv.SetServerMaxLatencyMs(tmpsrv.MaxLatencyMs)
-	newsrv.SetServersComment(tmpsrv.Comment)
+	newqr.SetQrRuleid(tmpqr.Rule_id)
+	newqr.SetQrProxyAddr(tmpqr.Proxy_addr)
+	newqr.SetProxyPort(tmpqr.Proxy_port)
+	newqr.SetQrActive(tmpqr.Active)
+	newqr.SetQrApply(tmpqr.Apply)
+	newqr.SetQrCacheTTL(tmpqr.Cache_ttl)
+	newqr.SetQrClientAddr(tmpqr.Client_addr)
+	newqr.SetQrDelay(tmpqr.Delay)
+	newqr.SetQrDestHostGroup(tmpqr.Destination_hostgroup)
+	newqr.SetQrDigest(tmpqr.Digest)
+	newqr.SetQrErrorMsg(tmpqr.Error_msg)
+	newqr.SetQrFlagIN(tmpqr.FlagIN)
+	newqr.SetQrFlagOut(tmpqr.FlagOUT)
+	newqr.SetQrLog(tmpqr.Log)
+	newqr.SetQrMatchDigest(tmpqr.Match_digest)
+	newqr.SetQrMatchPattern(tmpqr.Match_pattern)
+	newqr.SetQrMirrorFlagOUT(tmpqr.Mirror_flagOUT)
+	newqr.SetQrMirrorHostgroup(tmpqr.Mirror_hostgroup)
+	newqr.SetQrNegateMatchPattern(tmpqr.Negate_match_pattern)
+	newqr.SetQrReconnect(tmpqr.Reconnect)
+	newqr.SetQrReplacePattern(tmpqr.Replace_pattern)
+	newqr.SetQrRetries(tmpqr.Retries)
+	newqr.SetQrSchemaname(tmpqr.Schemaname)
+	newqr.SetQrTimeOut(tmpqr.Timeout)
 
-	err = newsrv.DeleteOneServers(db)
+	err = newqr.DeleteOneQr(db)
 	if err != nil {
 		return errors.Trace(err)
 	}

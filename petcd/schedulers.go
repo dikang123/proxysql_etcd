@@ -41,33 +41,33 @@ func SyncSchldToProxy(etcdcli *EtcdCli, cli *clientv3.Client) error {
 
 	for _, evs := range resp.Kvs {
 		// get servers information.
-		var tmpsrv proxysql.Servers
+		var tmpschld proxysql.Schedulers
 		// key is username ,like user01
 		// value is proxysql.Users []byte type.
 		//key, _ := base64.StdEncoding.DecodeString(string(evs.Key))
 		value, _ := base64.StdEncoding.DecodeString(string(evs.Value))
 
 		// []byte to proxysql.Users struct.
-		if err := json.Unmarshal(value, &tmpsrv); err != nil {
+		if err := json.Unmarshal(value, &tmpschld); err != nil {
 			return errors.Trace(err)
 		}
 
 		// new user handler
-		newsrv, err := proxysql.NewServer(tmpsrv.HostGroupId, tmpsrv.HostName, tmpsrv.Port)
+		newschld, err := proxysql.NewSch(tmpschld.FileName, tmpschld.IntervalMs)
 		if err != nil {
 			return errors.Trace(err)
 		}
 
-		newsrv.SetServerStatus(tmpsrv.Status)
-		newsrv.SetServerWeight(tmpsrv.Weight)
-		newsrv.SetServerCompression(tmpsrv.Compression)
-		newsrv.SetServerMaxConnection(tmpsrv.MaxConnections)
-		newsrv.SetServerMaxReplicationLag(tmpsrv.MaxReplicationLag)
-		newsrv.SetServerUseSSL(tmpsrv.UseSsl)
-		newsrv.SetServerMaxLatencyMs(tmpsrv.MaxLatencyMs)
-		newsrv.SetServersComment(tmpsrv.Comment)
+		newschld.SetSchedulerId(tmpschld.Id)
+		newschld.SetSchedulerIntervalMs(tmpschld.IntervalMs)
+		newschld.SetSchedulerActive(tmpschld.Active)
+		newschld.SetSchedulerArg1(tmpschld.Arg1)
+		newschld.SetSchedulerArg2(tmpschld.Arg2)
+		newschld.SetSchedulerArg3(tmpschld.Arg3)
+		newschld.SetSchedulerArg4(tmpschld.Arg4)
+		newschld.SetSchedulerArg5(tmpschld.Arg5)
 
-		err = newsrv.AddOneServers(db)
+		err = newschld.AddOneScheduler(db)
 		if err != nil {
 			return errors.Trace(err)
 		}
@@ -100,33 +100,33 @@ func CreateOneSchld(etcdcli *EtcdCli) error {
 	}
 
 	// get servers information.
-	var tmpsrv proxysql.Servers
+	var tmpschld proxysql.Schedulers
 	// key is username ,like user01
 	// value is proxysql.Users []byte type.
 	//key, _ := base64.StdEncoding.DecodeString(etcdcli.Key)
 	value, _ := base64.StdEncoding.DecodeString(etcdcli.Value)
 
 	// []byte to proxysql.Users struct.
-	if err := json.Unmarshal(value, &tmpsrv); err != nil {
+	if err := json.Unmarshal(value, &tmpschld); err != nil {
 		return errors.Trace(err)
 	}
 
 	// new user handler
-	newsrv, err := proxysql.NewServer(tmpsrv.HostGroupId, tmpsrv.HostName, tmpsrv.Port)
+	newschld, err := proxysql.NewSch(tmpschld.FileName, tmpschld.IntervalMs)
 	if err != nil {
 		return errors.Trace(err)
 	}
 
-	newsrv.SetServerStatus(tmpsrv.Status)
-	newsrv.SetServerWeight(tmpsrv.Weight)
-	newsrv.SetServerCompression(tmpsrv.Compression)
-	newsrv.SetServerMaxConnection(tmpsrv.MaxConnections)
-	newsrv.SetServerMaxReplicationLag(tmpsrv.MaxReplicationLag)
-	newsrv.SetServerUseSSL(tmpsrv.UseSsl)
-	newsrv.SetServerMaxLatencyMs(tmpsrv.MaxLatencyMs)
-	newsrv.SetServersComment(tmpsrv.Comment)
+	newschld.SetSchedulerId(tmpschld.Id)
+	newschld.SetSchedulerIntervalMs(tmpschld.IntervalMs)
+	newschld.SetSchedulerActive(tmpschld.Active)
+	newschld.SetSchedulerArg1(tmpschld.Arg1)
+	newschld.SetSchedulerArg2(tmpschld.Arg2)
+	newschld.SetSchedulerArg3(tmpschld.Arg3)
+	newschld.SetSchedulerArg4(tmpschld.Arg4)
+	newschld.SetSchedulerArg5(tmpschld.Arg5)
 
-	err = newsrv.AddOneServers(db)
+	err = newschld.AddOneScheduler(db)
 	if err != nil {
 		return errors.Trace(err)
 	}
@@ -159,33 +159,33 @@ func UpdateOneSchld(etcdcli *EtcdCli) error {
 	}
 
 	// get servers information.
-	var tmpsrv proxysql.Servers
+	var tmpschld proxysql.Schedulers
 	// key is username ,like user01
 	// value is proxysql.Users []byte type.
 	//key, _ := base64.StdEncoding.DecodeString(etcdcli.Key)
 	value, _ := base64.StdEncoding.DecodeString(etcdcli.Value)
 
 	// []byte to proxysql.Users struct.
-	if err := json.Unmarshal(value, &tmpsrv); err != nil {
+	if err := json.Unmarshal(value, &tmpschld); err != nil {
 		return errors.Trace(err)
 	}
 
 	// new user handler
-	newsrv, err := proxysql.NewServer(tmpsrv.HostGroupId, tmpsrv.HostName, tmpsrv.Port)
+	newschld, err := proxysql.NewSch(tmpschld.FileName, tmpschld.IntervalMs)
 	if err != nil {
 		return errors.Trace(err)
 	}
 
-	newsrv.SetServerStatus(tmpsrv.Status)
-	newsrv.SetServerWeight(tmpsrv.Weight)
-	newsrv.SetServerCompression(tmpsrv.Compression)
-	newsrv.SetServerMaxConnection(tmpsrv.MaxConnections)
-	newsrv.SetServerMaxReplicationLag(tmpsrv.MaxReplicationLag)
-	newsrv.SetServerUseSSL(tmpsrv.UseSsl)
-	newsrv.SetServerMaxLatencyMs(tmpsrv.MaxLatencyMs)
-	newsrv.SetServersComment(tmpsrv.Comment)
+	newschld.SetSchedulerId(tmpschld.Id)
+	newschld.SetSchedulerIntervalMs(tmpschld.IntervalMs)
+	newschld.SetSchedulerActive(tmpschld.Active)
+	newschld.SetSchedulerArg1(tmpschld.Arg1)
+	newschld.SetSchedulerArg2(tmpschld.Arg2)
+	newschld.SetSchedulerArg3(tmpschld.Arg3)
+	newschld.SetSchedulerArg4(tmpschld.Arg4)
+	newschld.SetSchedulerArg5(tmpschld.Arg5)
 
-	err = newsrv.UpdateOneServerInfo(db)
+	err = newschld.UpdateOneSchedulerInfo(db)
 	if err != nil {
 		return errors.Trace(err)
 	}
@@ -217,33 +217,33 @@ func DeleteOneSchld(etcdcli *EtcdCli) error {
 	}
 
 	// get servers information.
-	var tmpsrv proxysql.Servers
+	var tmpschld proxysql.Schedulers
 	// key is username ,like user01
 	// value is proxysql.Users []byte type.
 	//key, _ := base64.StdEncoding.DecodeString(etcdcli.Key)
 	value, _ := base64.StdEncoding.DecodeString(etcdcli.Value)
 
 	// []byte to proxysql.Users struct.
-	if err := json.Unmarshal(value, &tmpsrv); err != nil {
+	if err := json.Unmarshal(value, &tmpschld); err != nil {
 		return errors.Trace(err)
 	}
 
 	// new user handler
-	newsrv, err := proxysql.NewServer(tmpsrv.HostGroupId, tmpsrv.HostName, tmpsrv.Port)
+	newschld, err := proxysql.NewSch(tmpschld.FileName, tmpschld.IntervalMs)
 	if err != nil {
 		return errors.Trace(err)
 	}
 
-	newsrv.SetServerStatus(tmpsrv.Status)
-	newsrv.SetServerWeight(tmpsrv.Weight)
-	newsrv.SetServerCompression(tmpsrv.Compression)
-	newsrv.SetServerMaxConnection(tmpsrv.MaxConnections)
-	newsrv.SetServerMaxReplicationLag(tmpsrv.MaxReplicationLag)
-	newsrv.SetServerUseSSL(tmpsrv.UseSsl)
-	newsrv.SetServerMaxLatencyMs(tmpsrv.MaxLatencyMs)
-	newsrv.SetServersComment(tmpsrv.Comment)
+	newschld.SetSchedulerId(tmpschld.Id)
+	newschld.SetSchedulerIntervalMs(tmpschld.IntervalMs)
+	newschld.SetSchedulerActive(tmpschld.Active)
+	newschld.SetSchedulerArg1(tmpschld.Arg1)
+	newschld.SetSchedulerArg2(tmpschld.Arg2)
+	newschld.SetSchedulerArg3(tmpschld.Arg3)
+	newschld.SetSchedulerArg4(tmpschld.Arg4)
+	newschld.SetSchedulerArg5(tmpschld.Arg5)
 
-	err = newsrv.DeleteOneServers(db)
+	err = newschld.DeleteOneScheduler(db)
 	if err != nil {
 		return errors.Trace(err)
 	}
