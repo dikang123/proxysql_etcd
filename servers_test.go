@@ -38,7 +38,6 @@ func TestServer(t *testing.T) {
 
 	for i := 0; i < 1000; i++ {
 
-		fmt.Println("add user devtest" + strconv.Itoa(i))
 		// new users handler
 		srv01, err := proxysql.NewServer(uint64(i), "127.0.0.1", uint64(3301+i))
 		if err != nil {

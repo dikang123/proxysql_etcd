@@ -34,7 +34,6 @@ func TestUser(t *testing.T) {
 
 	for i := 0; i < 1000; i++ {
 
-		fmt.Println("add user devtest" + strconv.Itoa(i))
 		// new users handler
 		user01, err := proxysql.NewUser("devtest"+strconv.Itoa(i), "devtest"+strconv.Itoa(i), 0, "devtest"+strconv.Itoa(i))
 		if err != nil {
