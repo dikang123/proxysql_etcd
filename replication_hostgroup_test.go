@@ -28,7 +28,7 @@ func TestRHG(t *testing.T) {
 
 	cli, err := etcdcli.OpenEtcd()
 	if err != nil {
-		fmt.Println(err)
+		t.Error(err)
 	}
 
 	for i := 0; i < 100; i++ {
