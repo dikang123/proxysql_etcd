@@ -28,7 +28,11 @@ Simple install the package to you $GOPATH with the go tool from shell:
 
 Make sure git command is installed on your OS.
 
-#### 4.Execute Test
+#### 4. Startup proxysql_etcd
+-----
+    # ./startup_proxysql_etcd.sh
+    
+#### 5.Execute Test
 -----
 
 Execute follow command:
