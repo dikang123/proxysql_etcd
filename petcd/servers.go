@@ -5,6 +5,8 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"strconv"
+	"strings"
 
 	"github.com/coreos/etcd/clientv3"
 	"github.com/imSQL/proxysql"
@@ -217,31 +219,21 @@ func DeleteOneServer(etcdcli *EtcdCli) error {
 	}
 
 	// get servers information.
-	var tmpsrv proxysql.Servers
+	//var tmpsrv proxysql.Servers
 	// key is username ,like user01
 	// value is proxysql.Users []byte type.
-	//key, _ := base64.StdEncoding.DecodeString(etcdcli.Key)
-	value, _ := base64.StdEncoding.DecodeString(etcdcli.Value)
+	key, _ := base64.StdEncoding.DecodeString(etcdcli.Key)
+	//value, _ := base64.StdEncoding.DecodeString(etcdcli.Value)
 
-	// []byte to proxysql.Users struct.
-	if err := json.Unmarshal(value, &tmpsrv); err != nil {
-		return errors.Trace(err)
-	}
+	server_hostgroup_id, _ := strconv.Atoi(strings.Split(string(key), "|")[0])
+	server_hostname := strings.Split(string(key), "|")[1]
+	server_port, _ := strconv.Atoi(strings.Split(string(key), "|")[2])
 
 	// new user handler
-	newsrv, err := proxysql.NewServer(tmpsrv.HostGroupId, tmpsrv.HostName, tmpsrv.Port)
+	newsrv, err := proxysql.NewServer(uint64(server_hostgroup_id), server_hostname, uint64(server_port))
 	if err != nil {
 		return errors.Trace(err)
 	}
-
-	newsrv.SetServerStatus(tmpsrv.Status)
-	newsrv.SetServerWeight(tmpsrv.Weight)
-	newsrv.SetServerCompression(tmpsrv.Compression)
-	newsrv.SetServerMaxConnection(tmpsrv.MaxConnections)
-	newsrv.SetServerMaxReplicationLag(tmpsrv.MaxReplicationLag)
-	newsrv.SetServerUseSSL(tmpsrv.UseSsl)
-	newsrv.SetServerMaxLatencyMs(tmpsrv.MaxLatencyMs)
-	newsrv.SetServersComment(tmpsrv.Comment)
 
 	err = newsrv.DeleteOneServers(db)
 	if err != nil {
