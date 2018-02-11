@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/base64"
-	"encoding/json"
 	"flag"
 	"fmt"
 	"testing"
@@ -12,6 +11,10 @@ import (
 
 	"github.com/imSQL/proxysql_etcd/petcd"
 )
+
+var etcd_points = flag.String("addr", "127.0.0.1:2379", "etcd endpoints,default 127.0.0.1:2379")
+var etcd_prefix = flag.String("prefix", "database", "etcd watch root,default database")
+var etcd_service = flag.String("service", "users", "etcd watch service name,default users")
 
 func TestVariables(t *testing.T) {
 
@@ -38,7 +41,7 @@ func TestVariables(t *testing.T) {
 		t.Error(err)
 	}
 
-	value, err := json.Marshal(vars)
+	value := []byte(vars.Value)
 	if err != nil {
 		t.Error(err)
 	}

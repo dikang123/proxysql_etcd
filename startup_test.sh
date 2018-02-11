@@ -6,5 +6,5 @@
 #########################################################################
 #!/bin/bash
 
-go test -timeout 30m --args -addr 172.18.10.136:2379 -prefix database -service parauser
+go test -timeout 30m variables_test.go --args -addr 172.18.10.136:2379 -prefix database -service parauser 
 

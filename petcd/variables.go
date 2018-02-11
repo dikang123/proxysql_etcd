@@ -2,6 +2,7 @@ package petcd
 
 import (
 	"encoding/base64"
+	"fmt"
 
 	"github.com/imSQL/proxysql"
 	"github.com/juju/errors"
@@ -27,11 +28,13 @@ func UpdateOneVars(etcdcli *EtcdCli) error {
 	}
 
 	// get servers information.
-	var tmpvrs proxysql.Variables
+	//var tmpvrs proxysql.Variables
 	// key is username ,like user01
 	// value is proxysql.Users []byte type.
 	key, _ := base64.StdEncoding.DecodeString(etcdcli.Key)
 	value, _ := base64.StdEncoding.DecodeString(etcdcli.Value)
+
+	fmt.Println(">>>", string(key), string(value))
 
 	//update on variable.
 	err = proxysql.UpdateOneConfig(db, string(key), string(value))
