@@ -215,16 +215,16 @@ func DeleteOneUser(etcdcli *EtcdCli) error {
 		return errors.Trace(err)
 	}
 
-	var tmpusr proxysql.Users
+	//var tmpusr proxysql.Users
 	key, _ := base64.StdEncoding.DecodeString(etcdcli.Key)
-	value, _ := base64.StdEncoding.DecodeString(etcdcli.Value)
+	//value, _ := base64.StdEncoding.DecodeString(etcdcli.Value)
 
 	// convert []byte to json
-	if err := json.Unmarshal(value, &tmpusr); err != nil {
-		return errors.Trace(err)
-	}
+	//if err := json.Unmarshal(value, &tmpusr); err != nil {
+	//	return errors.Trace(err)
+	//}
 
-	newuser, err := proxysql.NewUser(string(key), tmpusr.Password, tmpusr.DefaultHostgroup, tmpusr.Username)
+	newuser, err := proxysql.NewUser(string(key), "111111", 0, string(key))
 	if err != nil {
 		return errors.Trace(err)
 	}

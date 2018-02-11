@@ -10,8 +10,6 @@ import (
 
 	"github.com/imSQL/proxysql"
 
-	"github.com/coreos/etcd/clientv3"
-
 	"github.com/imSQL/proxysql_etcd/petcd"
 )
 
@@ -27,7 +25,7 @@ func TestVariables(t *testing.T) {
 
 	etcdcli.SetPrefix(*etcd_prefix)
 	etcdcli.SetService(*etcd_service)
-	etcdcli.SetEtcdType("servers")
+	etcdcli.SetEtcdType("variables")
 	etcdcli.MakeWatchRoot()
 
 	cli, err := etcdcli.OpenEtcd()
@@ -63,23 +61,4 @@ func TestVariables(t *testing.T) {
 
 	fmt.Println("Put success")
 
-	// update user
-	ctx, cancel = context.WithTimeout(context.Background(), etcdcli.RequestTimeout)
-	_, err = cli.Put(ctx, etcdcli.Root+"/"+encodeKey, encodeValue)
-	cancel()
-	if err != nil {
-		t.Error(err)
-	}
-
-	fmt.Println("Put success")
-
-	// delete user
-	fmt.Println(etcdcli.Root + "/" + encodeKey)
-	ctx, cancel = context.WithTimeout(context.Background(), etcdcli.RequestTimeout)
-	_, err = cli.Delete(ctx, etcdcli.Root+"/"+encodeKey, clientv3.WithPrefix())
-	if err != nil {
-		t.Error(err)
-	}
-
-	fmt.Println("Del success")
 }
