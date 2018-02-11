@@ -11,12 +11,18 @@ A proxysql distributed tools.
 
 1. Go 1.7 +
 1. ProxySQL 1.3.x
+1. github.com/coreos/etcd/clientv3
+1. github.com/coreos/etcd/mvcc/mvccpb
+1. github.com/imSQL/proxysql
 
 #### 3.Installation
 -----
 
 Simple install the package to you $GOPATH with the go tool from shell:
 
+    # go get -u github.com/coreos/etcd/clientv3
+    # go get -u github.com/coreos/etcd/mvcc/mvccpb
+    # go get -u github.com/imSQL/proxysql
     # go get -u github.com/imSQL/proxysql_etcd
     
 
