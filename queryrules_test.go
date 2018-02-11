@@ -75,7 +75,7 @@ func TestQr(t *testing.T) {
 		fmt.Println("Create success")
 
 		qr01.SetQrActive(1)
-		qr01.SetQrDigest("^SELECT")
+		qr01.SetQrMatchDigest("^SELECT")
 
 		value, err = json.Marshal(qr01)
 		if err != nil {
