@@ -14,6 +14,14 @@ import (
 	"github.com/juju/errors"
 )
 
+var etcd_points = os.Getenv("ETCD_ADDR")
+var etcd_prefix = os.Getenv("ETCD_PREFIX")
+var etcd_service = os.Getenv("ETCD_SVC")
+var proxysql_addr = os.Getenv("PROXYSQL_ADDR")
+var proxysql_port = os.Getenv("PROXYSQL_PORT")
+var proxysql_user = os.Getenv("PROXYSQL_USER")
+var proxysql_pass = os.Getenv("PROXYSQL_PASS")
+
 func main() {
 
 	// get value from env
@@ -22,15 +30,7 @@ func main() {
 	// etcd_service like "users"
 	// proxysql_addr like "user:password@addr?dbname"
 
-	etcd_endpoints := os.Getenv("ETCD_ADDR")
-	etcd_prefix := os.Getenv("ETCD_PREFIX")
-	etcd_service := os.Getenv("ETCD_SVC")
-	proxysql_addr := os.Getenv("PROXYSQL_ADDR")
-	proxysql_port := os.Getenv("PROXYSQL_PORT")
-	proxysql_user := os.Getenv("PROXYSQL_USER")
-	proxysql_pass := os.Getenv("PROXYSQL_PASS")
-
-	endpoints := strings.Split(etcd_endpoints, ",")
+	endpoints := strings.Split(etcd_points, ",")
 	etcdcli := petcd.NewEtcdCli(endpoints)
 
 	etcdcli.SetPrefix(etcd_prefix)

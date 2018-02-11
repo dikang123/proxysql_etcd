@@ -6,5 +6,9 @@
 #########################################################################
 #!/bin/bash
 
-go test -timeout 30m variables_test.go --args -addr 172.18.10.136:2379 -prefix database -service parauser 
 
+export ETCD_ADDR="172.18.10.136:2379"
+export ETCD_PREFIX="database"
+export ETCD_SVC="parauser"
+
+go test -timeout 30m 

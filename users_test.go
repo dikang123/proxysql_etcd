@@ -20,10 +20,10 @@ func TestUser(t *testing.T) {
 
 	flag.Parse()
 	// set etcd dbi
-	etcdcli := petcd.NewEtcdCli([]string{*etcd_points})
+	etcdcli := petcd.NewEtcdCli([]string{etcd_points})
 
-	etcdcli.SetPrefix(*etcd_prefix)
-	etcdcli.SetService(*etcd_service)
+	etcdcli.SetPrefix(etcd_prefix)
+	etcdcli.SetService(etcd_service)
 	etcdcli.SetEtcdType("users")
 	etcdcli.MakeWatchRoot()
 
