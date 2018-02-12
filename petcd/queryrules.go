@@ -54,7 +54,7 @@ func SyncQrToProxy(etcdcli *EtcdCli, cli *clientv3.Client) error {
 		}
 
 		// new user handler
-		newqr, err := proxysql.NewQr(tmpqr.Username, tmpqr.Destination_hostgroup)
+		newqr, err := proxysql.NewQr(tmpqr.Username)
 		if err != nil {
 			return errors.Trace(err)
 		}
@@ -129,7 +129,7 @@ func CreateOneQr(etcdcli *EtcdCli) error {
 	}
 
 	// new user handler
-	newqr, err := proxysql.NewQr(tmpqr.Username, tmpqr.Destination_hostgroup)
+	newqr, err := proxysql.NewQr(tmpqr.Username)
 	if err != nil {
 		return errors.Trace(err)
 	}
@@ -204,7 +204,7 @@ func UpdateOneQr(etcdcli *EtcdCli) error {
 	}
 
 	// new user handler
-	newqr, err := proxysql.NewQr(tmpqr.Username, tmpqr.Destination_hostgroup)
+	newqr, err := proxysql.NewQr(tmpqr.Username)
 	if err != nil {
 		return errors.Trace(err)
 	}
@@ -266,13 +266,13 @@ func DeleteOneQr(etcdcli *EtcdCli) error {
 	}
 
 	// get servers information.
-	var tmpqr proxysql.QueryRules
+	//var tmpqr proxysql.QueryRules
 	// key is username ,like user01
 	// value is proxysql.Users []byte type.
 	key, _ := base64.StdEncoding.DecodeString(etcdcli.Key)
 	//value, _ := base64.StdEncoding.DecodeString(etcdcli.Value)
 
-	newqr, err := proxysql.NewQr(tmpqr.Username, tmpqr.Destination_hostgroup)
+	newqr, err := proxysql.NewQr("test")
 	if err != nil {
 		return errors.Trace(err)
 	}

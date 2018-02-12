@@ -35,7 +35,7 @@ func TestQr(t *testing.T) {
 
 		// new users handler
 		user_name := fmt.Sprintf("user%d", i)
-		qr01, err := proxysql.NewQr(user_name, uint64(i))
+		qr01, err := proxysql.NewQr(user_name)
 		if err != nil {
 			t.Error(err)
 		}
@@ -75,7 +75,18 @@ func TestQr(t *testing.T) {
 		fmt.Println("Create success")
 
 		qr01.SetQrActive(1)
-		qr01.SetQrMatchDigest("^SELECT")
+		qr01.SetQrApply(1)
+		qr01.SetQrSchemaname("test_schema")
+		qr01.SetQrFlagIN(1)
+		qr01.SetQrClientAddr("192.168.100.120")
+		qr01.SetQrProxyAddr("192.168.100.1")
+		qr01.SetProxyPort("9999")
+		qr01.SetQrDigest("0x0D34125A1267E1FE")
+		qr01.SetQrNegateMatchPattern(0)
+		qr01.SetQrCacheTTL("100")
+		qr01.SetQrReconnect("0")
+		qr01.SetQrRetries("5")
+		qr01.SetQrLog("0")
 
 		value, err = json.Marshal(qr01)
 		if err != nil {
