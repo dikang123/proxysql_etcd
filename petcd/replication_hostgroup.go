@@ -9,12 +9,13 @@ import (
 	"strings"
 
 	"github.com/coreos/etcd/clientv3"
+	"github.com/imSQL/etcd"
 	"github.com/imSQL/proxysql"
 	"github.com/juju/errors"
 )
 
 // sync etcd users informations to proxysql_users
-func SyncRhgToProxy(etcdcli *EtcdCli, cli *clientv3.Client) error {
+func SyncRhgToProxy(etcdcli *etcd.EtcdCli, cli *clientv3.Client) error {
 
 	// get value from etcd
 	ctx, cancel := context.WithTimeout(context.Background(), etcdcli.RequestTimeout)
@@ -79,7 +80,7 @@ func SyncRhgToProxy(etcdcli *EtcdCli, cli *clientv3.Client) error {
 
 //create a new mysql_users in proxysql.
 //create success return nil,else return error
-func CreateOneRhg(etcdcli *EtcdCli) error {
+func CreateOneRhg(etcdcli *etcd.EtcdCli) error {
 
 	//new proxysql connection.
 	conn, err := proxysql.NewConn(etcdcli.ProxySQLAddr, etcdcli.ProxySQLPort, etcdcli.ProxySQLAdmin, etcdcli.ProxySQLPass)
@@ -133,7 +134,7 @@ func CreateOneRhg(etcdcli *EtcdCli) error {
 
 // update a proxysql mysql_users information.
 // update successed return nil,else return error
-func UpdateOneRhg(etcdcli *EtcdCli) error {
+func UpdateOneRhg(etcdcli *etcd.EtcdCli) error {
 
 	//new proxysql connection.
 	conn, err := proxysql.NewConn(etcdcli.ProxySQLAddr, etcdcli.ProxySQLPort, etcdcli.ProxySQLAdmin, etcdcli.ProxySQLPass)
@@ -186,7 +187,7 @@ func UpdateOneRhg(etcdcli *EtcdCli) error {
 }
 
 // delete a proxysql mysql_users.
-func DeleteOneRhg(etcdcli *EtcdCli) error {
+func DeleteOneRhg(etcdcli *etcd.EtcdCli) error {
 
 	//new proxysql connection.
 	conn, err := proxysql.NewConn(etcdcli.ProxySQLAddr, etcdcli.ProxySQLPort, etcdcli.ProxySQLAdmin, etcdcli.ProxySQLPass)

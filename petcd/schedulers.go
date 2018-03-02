@@ -4,16 +4,16 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
-	"fmt"
 	"strconv"
 
 	"github.com/coreos/etcd/clientv3"
+	"github.com/imSQL/etcd"
 	"github.com/imSQL/proxysql"
 	"github.com/juju/errors"
 )
 
 // sync etcd users informations to proxysql_users
-func SyncSchldToProxy(etcdcli *EtcdCli, cli *clientv3.Client) error {
+func SyncSchldToProxy(etcdcli *etcd.EtcdCli, cli *clientv3.Client) error {
 
 	// get value from etcd
 	ctx, cancel := context.WithTimeout(context.Background(), etcdcli.RequestTimeout)
@@ -37,8 +37,6 @@ func SyncSchldToProxy(etcdcli *EtcdCli, cli *clientv3.Client) error {
 	if err != nil {
 		return errors.Trace(err)
 	}
-
-	fmt.Println(resp.Kvs)
 
 	for _, evs := range resp.Kvs {
 		// get servers information.
@@ -83,7 +81,7 @@ func SyncSchldToProxy(etcdcli *EtcdCli, cli *clientv3.Client) error {
 
 //create a new mysql_users in proxysql.
 //create success return nil,else return error
-func CreateOneSchld(etcdcli *EtcdCli) error {
+func CreateOneSchld(etcdcli *etcd.EtcdCli) error {
 
 	//new proxysql connection.
 	conn, err := proxysql.NewConn(etcdcli.ProxySQLAddr, etcdcli.ProxySQLPort, etcdcli.ProxySQLAdmin, etcdcli.ProxySQLPass)
@@ -127,8 +125,6 @@ func CreateOneSchld(etcdcli *EtcdCli) error {
 	newschld.SetSchedulerArg4(tmpschld.Arg4)
 	newschld.SetSchedulerArg5(tmpschld.Arg5)
 
-	fmt.Println(newschld)
-
 	err = newschld.AddOneScheduler(db)
 	if err != nil {
 		return errors.Trace(err)
@@ -144,7 +140,7 @@ func CreateOneSchld(etcdcli *EtcdCli) error {
 
 // update a proxysql mysql_users information.
 // update successed return nil,else return error
-func UpdateOneSchld(etcdcli *EtcdCli) error {
+func UpdateOneSchld(etcdcli *etcd.EtcdCli) error {
 
 	//new proxysql connection.
 	conn, err := proxysql.NewConn(etcdcli.ProxySQLAddr, etcdcli.ProxySQLPort, etcdcli.ProxySQLAdmin, etcdcli.ProxySQLPass)
@@ -202,7 +198,7 @@ func UpdateOneSchld(etcdcli *EtcdCli) error {
 }
 
 // delete a proxysql mysql_users.
-func DeleteOneSchld(etcdcli *EtcdCli) error {
+func DeleteOneSchld(etcdcli *etcd.EtcdCli) error {
 
 	//new proxysql connection.
 	conn, err := proxysql.NewConn(etcdcli.ProxySQLAddr, etcdcli.ProxySQLPort, etcdcli.ProxySQLAdmin, etcdcli.ProxySQLPass)

@@ -3,13 +3,13 @@ package main
 import (
 	"context"
 	"encoding/base64"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"testing"
 
+	"github.com/imSQL/etcd"
 	"github.com/imSQL/proxysql"
-
-	"github.com/imSQL/proxysql_etcd/petcd"
 )
 
 func TestVariables(t *testing.T) {
@@ -20,7 +20,7 @@ func TestVariables(t *testing.T) {
 
 	flag.Parse()
 	// set etcd dbi
-	etcdcli := petcd.NewEtcdCli([]string{etcd_points})
+	etcdcli := etcd.NewEtcdCli([]string{etcd_points})
 
 	etcdcli.SetPrefix(etcd_prefix)
 	etcdcli.SetService(etcd_service)
@@ -33,11 +33,7 @@ func TestVariables(t *testing.T) {
 	}
 
 	key := []byte(vars.VariablesName)
-	if err != nil {
-		t.Error(err)
-	}
-
-	value := []byte(vars.Value)
+	value, err := json.Marshal(vars)
 	if err != nil {
 		t.Error(err)
 	}

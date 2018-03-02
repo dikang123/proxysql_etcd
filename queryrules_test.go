@@ -11,15 +11,15 @@ import (
 
 	"github.com/coreos/etcd/clientv3"
 
+	"github.com/imSQL/etcd"
 	"github.com/imSQL/proxysql"
-	"github.com/imSQL/proxysql_etcd/petcd"
 )
 
 func TestQr(t *testing.T) {
 
 	flag.Parse()
 	// set etcd dbi
-	etcdcli := petcd.NewEtcdCli([]string{etcd_points})
+	etcdcli := etcd.NewEtcdCli([]string{etcd_points})
 
 	etcdcli.SetPrefix(etcd_prefix)
 	etcdcli.SetService(etcd_service)

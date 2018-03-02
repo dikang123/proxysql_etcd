@@ -4,16 +4,16 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
-	"fmt"
 	"strconv"
 
 	"github.com/coreos/etcd/clientv3"
+	"github.com/imSQL/etcd"
 	"github.com/imSQL/proxysql"
 	"github.com/juju/errors"
 )
 
 // sync etcd users informations to proxysql_users
-func SyncQrToProxy(etcdcli *EtcdCli, cli *clientv3.Client) error {
+func SyncQrToProxy(etcdcli *etcd.EtcdCli, cli *clientv3.Client) error {
 
 	// get value from etcd
 	ctx, cancel := context.WithTimeout(context.Background(), etcdcli.RequestTimeout)
@@ -37,8 +37,6 @@ func SyncQrToProxy(etcdcli *EtcdCli, cli *clientv3.Client) error {
 	if err != nil {
 		return errors.Trace(err)
 	}
-
-	fmt.Println(resp.Kvs)
 
 	for _, evs := range resp.Kvs {
 		// get servers information.
@@ -99,7 +97,7 @@ func SyncQrToProxy(etcdcli *EtcdCli, cli *clientv3.Client) error {
 
 //create a new mysql_users in proxysql.
 //create success return nil,else return error
-func CreateOneQr(etcdcli *EtcdCli) error {
+func CreateOneQr(etcdcli *etcd.EtcdCli) error {
 
 	//new proxysql connection.
 	conn, err := proxysql.NewConn(etcdcli.ProxySQLAddr, etcdcli.ProxySQLPort, etcdcli.ProxySQLAdmin, etcdcli.ProxySQLPass)
@@ -174,7 +172,7 @@ func CreateOneQr(etcdcli *EtcdCli) error {
 
 // update a proxysql mysql_users information.
 // update successed return nil,else return error
-func UpdateOneQr(etcdcli *EtcdCli) error {
+func UpdateOneQr(etcdcli *etcd.EtcdCli) error {
 
 	//new proxysql connection.
 	conn, err := proxysql.NewConn(etcdcli.ProxySQLAddr, etcdcli.ProxySQLPort, etcdcli.ProxySQLAdmin, etcdcli.ProxySQLPass)
@@ -248,7 +246,7 @@ func UpdateOneQr(etcdcli *EtcdCli) error {
 }
 
 // delete a proxysql mysql_users.
-func DeleteOneQr(etcdcli *EtcdCli) error {
+func DeleteOneQr(etcdcli *etcd.EtcdCli) error {
 
 	//new proxysql connection.
 	conn, err := proxysql.NewConn(etcdcli.ProxySQLAddr, etcdcli.ProxySQLPort, etcdcli.ProxySQLAdmin, etcdcli.ProxySQLPass)
